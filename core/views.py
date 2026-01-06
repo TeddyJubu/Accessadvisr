@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
+from django.contrib import messages
 from .models import Listing, Review, Category
+from .forms import ReviewForm, ListingSubmissionForm
 
 
 def home(request):
@@ -61,11 +63,77 @@ def listing_detail(request, pk):
     reviews = listing.reviews.filter(moderation_status="approved")
     badges = listing.get_accessibility_badges()
     
+    # Initialize review form
+    review_form = ReviewForm()
+    
     return render(request, "core/listing_detail.html", {
         "listing": listing,
         "reviews": reviews,
         "badges": badges,
+        "review_form": review_form,
     })
+
+
+@require_http_methods(["POST"])
+def submit_review(request, pk):
+    """Handle review form submission"""
+    listing = get_object_or_404(Listing, pk=pk, moderation_status="approved")
+    
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        review = form.save(commit=False)
+        review.listing = listing
+        review.moderation_status = "pending"  # Goes to moderation queue
+        review.save()
+        messages.success(request, "Thank you for your review! It will be visible after moderation.")
+        return redirect("review_success", pk=pk)
+    
+    # If form invalid, re-render detail page with errors
+    reviews = listing.reviews.filter(moderation_status="approved")
+    badges = listing.get_accessibility_badges()
+    messages.error(request, "Please correct the errors below.")
+    
+    return render(request, "core/listing_detail.html", {
+        "listing": listing,
+        "reviews": reviews,
+        "badges": badges,
+        "review_form": form,
+    })
+
+
+def review_success(request, pk):
+    """Success page after submitting a review"""
+    listing = get_object_or_404(Listing, pk=pk)
+    return render(request, "core/review_success.html", {
+        "listing": listing,
+    })
+
+
+@require_http_methods(["GET", "POST"])
+def submit_listing(request):
+    """Form for users to suggest new accessible venues"""
+    if request.method == "POST":
+        form = ListingSubmissionForm(request.POST)
+        if form.is_valid():
+            listing = form.save()
+            messages.success(request, "Thank you for your submission! It will be reviewed by our team.")
+            return redirect("listing_submission_success")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = ListingSubmissionForm()
+    
+    categories = Category.objects.all()
+    
+    return render(request, "core/submit_listing.html", {
+        "form": form,
+        "categories": categories,
+    })
+
+
+def listing_submission_success(request):
+    """Success page after submitting a new listing"""
+    return render(request, "core/listing_submission_success.html")
 
 
 @require_http_methods(["GET", "POST"])
@@ -117,3 +185,4 @@ def listings_api(request):
     } for l in qs if l.lat is not None and l.lng is not None]
     
     return JsonResponse({"listings": data, "count": len(data)})
+

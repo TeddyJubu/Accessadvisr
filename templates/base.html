@@ -25,7 +25,11 @@
       <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
         <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Home</a>
         <a href="{% url 'listings_list' %}" class="hover:text-[#FF431E]">Listings</a>
-        <a href="{% url 'admin_page' %}" class="hover:text-[#FF431E]">Admin</a>
+        <a href="{% url 'submit_listing' %}"
+          class="flex items-center gap-1 px-4 py-2 bg-[#FF431E] text-white rounded-lg hover:bg-[#e53a19] transition-colors">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Add Venue
+        </a>
       </nav>
       <button class="lg:hidden text-slate-600" id="mobile-menu-button" aria-controls="mobile-menu"
         aria-expanded="false">
@@ -38,8 +42,9 @@
   <div id="mobile-menu" class="lg:hidden fixed inset-0 bg-white/95 backdrop-blur-sm hidden" role="dialog"
     aria-modal="true">
     <nav class="p-6 space-y-4 text-slate-700">
-      <a href="{% url 'home' %}" class="block font-semibold">Public</a>
-      <a href="{% url 'admin_page' %}" class="block font-semibold">Admin</a>
+      <a href="{% url 'home' %}" class="block font-semibold">Home</a>
+      <a href="{% url 'listings_list' %}" class="block font-semibold">Listings</a>
+      <a href="{% url 'submit_listing' %}" class="block font-semibold text-[#FF431E]">+ Add Venue</a>
       <button id="mobile-close" class="mt-6 w-full bg-[#FF431E] text-white py-3 rounded font-bold">Close</button>
     </nav>
   </div>

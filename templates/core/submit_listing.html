@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Add a Venue | AccessAdvisr{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+    <!-- Hero Header -->
+    <section class="bg-[#26354E] text-white py-12">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Suggest a New Venue</h1>
+            <p class="text-slate-300">Help us grow our accessibility directory by adding places you know.</p>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="container mx-auto px-4 py-12">
+        <div class="max-w-3xl mx-auto">
+            <!-- Info Banner -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="info" class="w-6 h-6 text-blue-600 shrink-0 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-bold text-blue-900 mb-1">Moderation Notice</h3>
+                        <p class="text-blue-700 text-sm">All submissions are reviewed by our team before being
+                            published. This typically takes 1-2 business days.</p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'submit_listing' %}"
+                class="bg-white rounded-xl border border-slate-100 shadow-sm">
+                {% csrf_token %}
+
+                <!-- Basic Information -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="building-2" class="w-5 h-5 text-[#FF431E]"></i>
+                        Basic Information
+                    </h2>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label for="id_name" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.name.label }} *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label for="id_subtitle" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.subtitle.label }}</label>
+                            {{ form.subtitle }}
+                        </div>
+
+                        <div>
+                            <label for="id_description" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.description.label }}</label>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-[#FF431E]"></i>
+                        Location
+                    </h2>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label for="id_address" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.address.label }}</label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="id_city" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.city.label }} *</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.city.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="id_country" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.country.label }} *</label>
+                                {{ form.country }}
+                                {% if form.country.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.country.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="phone" class="w-5 h-5 text-[#FF431E]"></i>
+                        Contact Information
+                    </h2>
+
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="id_phone" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.phone.label }}</label>
+                                {{ form.phone }}
+                            </div>
+                            <div>
+                                <label for="id_email" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.email.label }}</label>
+                                {{ form.email }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="id_website" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.website.label }}</label>
+                            {{ form.website }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="tags" class="w-5 h-5 text-[#FF431E]"></i>
+                        Categories
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mb-4">Select all categories that apply to this venue.</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {% for choice in form.category_choices %}
+                        <label
+                            class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors">
+                            {{ choice.tag }}
+                            <span class="text-sm text-slate-700">{{ choice.choice_label }}</span>
+                        </label>
+                        {% empty %}
+                        {% for cat in categories %}
+                        <label
+                            class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors">
+                            <input type="checkbox" name="category_choices" value="{{ cat.name }}"
+                                class="w-4 h-4 text-[#FF431E] border-slate-300 rounded focus:ring-[#FF431E]">
+                            <span class="text-sm text-slate-700">{{ cat.name }}</span>
+                        </label>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Accessibility Features -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="accessibility" class="w-5 h-5 text-[#FF431E]"></i>
+                        Accessibility Features
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mb-4">Select all accessibility features this venue offers.</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {% for value, label in form.accessibility_choices.field.choices %}
+                        <label
+                            class="flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 cursor-pointer transition-colors border border-green-100">
+                            <input type="checkbox" name="accessibility_choices" value="{{ value }}"
+                                class="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500">
+                            <span class="text-sm text-green-800">{{ label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Business Details -->
+                <div class="p-6 border-b border-slate-100">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-[#FF431E]"></i>
+                        Business Details
+                    </h2>
+
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="id_price_min" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.price_min.label }}</label>
+                                {{ form.price_min }}
+                            </div>
+                            <div>
+                                <label for="id_price_max" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.price_max.label }}</label>
+                                {{ form.price_max }}
+                            </div>
+                            <div>
+                                <label for="id_status" class="block text-sm font-semibold text-slate-700 mb-2">{{ form.status.label }}</label>
+                                {{ form.status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="p-6 bg-slate-50 rounded-b-xl">
+                    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                        <p class="text-sm text-slate-500">* Required fields</p>
+                        <div class="flex gap-3">
+                            <a href="{% url 'listings_list' %}"
+                                class="px-6 py-3 border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-100 transition-colors">
+                                Cancel
+                            </a>
+                            <button type="submit"
+                                class="px-8 py-3 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors flex items-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                Submit for Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>lucide.createIcons();</script>
+{% endblock %}

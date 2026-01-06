@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Review Submitted | AccessAdvisr{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-b from-slate-50 to-white min-h-screen flex items-center justify-center">
+    <section class="container mx-auto px-4 py-20">
+        <div class="max-w-lg mx-auto text-center">
+            <!-- Success Icon -->
+            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                <i data-lucide="message-circle-heart" class="w-12 h-12 text-green-600"></i>
+            </div>
+
+            <h1 class="text-3xl font-bold text-[#26354E] mb-4">Review Submitted!</h1>
+            <p class="text-lg text-slate-600 mb-4">
+                Thank you for sharing your accessibility experience at
+            </p>
+            <p class="text-xl font-bold text-[#FF431E] mb-8">{{ listing.name }}</p>
+
+            <!-- Info Card -->
+            <div class="bg-white rounded-xl border border-slate-100 p-6 mb-8 text-left">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="clock" class="w-6 h-6 text-amber-500 shrink-0 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-bold text-[#26354E] mb-1">Pending Moderation</h3>
+                        <p class="text-sm text-slate-600">
+                            Your review will be visible after our team verifies it. This usually takes less than 24
+                            hours.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Impact -->
+            <div class="bg-[#26354E] text-white rounded-xl p-6 mb-8">
+                <i data-lucide="heart" class="w-8 h-8 mx-auto mb-4 text-[#FF431E]"></i>
+                <h3 class="font-bold text-lg mb-2">You're Making a Difference</h3>
+                <p class="text-slate-300 text-sm">
+                    Your review helps other disabled travelers and allies plan their visits with confidence. Every
+                    contribution matters!
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'listing_detail' pk=listing.pk %}"
+                    class="px-6 py-3 border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-100 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4 inline-block mr-2"></i>
+                    Back to {{ listing.name|truncatechars:20 }}
+                </a>
+                <a href="{% url 'listings_list' %}"
+                    class="px-6 py-3 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors">
+                    <i data-lucide="map" class="w-4 h-4 inline-block mr-2"></i>
+                    Explore More Venues
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>lucide.createIcons();</script>
+{% endblock %}

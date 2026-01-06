@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block title %}{{ listing.name }} | AccessAdvisr{% endblock %} {% block content %} <div class="bg-gradient-to-b from-slate-50 to-white min-h-screen"> <!-- Breadcrumb -->
+{% extends "base.html" %} {% block title %}{{ listing.name }} | AccessAdvisr{% endblock %} {% block content %} <div
+    class="bg-gradient-to-b from-slate-50 to-white min-h-screen"> <!-- Breadcrumb -->
     <nav class="bg-white border-b py-3">
         <div class="container mx-auto px-4 flex items-center gap-2 text-sm text-slate-500">
             <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Home</a>
@@ -15,19 +16,25 @@
                 <div>
                     <div class="flex items-center gap-3 mb-2">
                         <span
-                            class="px-3 py-1 {% if listing.status  ==  'open' %}bg-green-500{% else %}bg-red-500{% endif %} text-white text-xs font-bold rounded-full uppercase"> {{ listing.status }} </span>
+                            class="px-3 py-1 {% if listing.status  ==  'open' %}bg-green-500{% else %}bg-red-500{% endif %} text-white text-xs font-bold rounded-full uppercase">
+                            {{ listing.status }} </span>
                         {% for cat in listing.categories|slice:":3" %}
                         <span class="px-3 py-1 bg-white/20 text-white text-xs rounded-full">{{ cat }}</span>
-                        {% endfor %} </div>
+                        {% endfor %}
+                    </div>
                     <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ listing.name }}</h1> {% if listing.subtitle %}
                     <p class="text-slate-300 text-lg">{{ listing.subtitle }}</p>
-                    {% endif %} </div>
+                    {% endif %}
+                </div>
 
                 <div class="flex items-center gap-4">
                     {% if listing.rating %}
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-amber-400">{{ listing.rating }}</div> <div class="text-sm text-slate-300">{{ listing.reviews_count }} reviews</div> </div>
-                    {% endif %} </div>
+                        <div class="text-3xl font-bold text-amber-400">{{ listing.rating }}</div>
+                        <div class="text-sm text-slate-300">{{ listing.reviews_count }} reviews</div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </section>
@@ -47,8 +54,11 @@
                 <section class="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
                     <h2 class="text-xl font-bold text-[#26354E] mb-4">Accessibility Features</h2>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {% for badge in badges %} <div class="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-lg">
-                            <i data-lucide="{{ badge.icon }}" class="w-6 h-6 text-green-600"></i> <span class="font-medium text-green-800">{{ badge.label }}</span> </div>
+                        {% for badge in badges %} <div
+                            class="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-lg">
+                            <i data-lucide="{{ badge.icon }}" class="w-6 h-6 text-green-600"></i> <span
+                                class="font-medium text-green-800">{{ badge.label }}</span>
+                        </div>
                         {% endfor %}
                     </div>
                 </section>
@@ -60,18 +70,24 @@
 
                     {% if reviews %}
                     <div class="space-y-6">
-                        {% for review in reviews %} <article class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+                        {% for review in reviews %} <article
+                            class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
                             <div class="flex items-start justify-between mb-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                                        <span class="font-bold text-slate-500">{{ review.author_name|slice:":1"|upper }}</span> </div>
+                                        <span class="font-bold text-slate-500">{{ review.author_name|slice:":1"|upper }}</span>
+                                    </div>
                                     <div>
-                                        <div class="font-semibold text-slate-700">{{ review.author_name }}</div> <div class="text-xs text-slate-400">{{ review.created_at|date:"M d, Y" }}</div> </div>
+                                        <div class="font-semibold text-slate-700">{{ review.author_name }}</div>
+                                        <div class="text-xs text-slate-400">{{ review.created_at|date:"M d, Y" }}</div>
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-1">
                                     {% for i in "12345" %}
                                     <i data-lucide="star"
-                                        class="w-4 h-4 {% if forloop.counter <= review.rating %}fill-amber-400 text-amber-400{% else %}text-slate-200{% endif %}"></i> {% endfor %} </div>
+                                        class="w-4 h-4 {% if forloop.counter <= review.rating %}fill-amber-400 text-amber-400{% else %}text-slate-200{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
                             </div>
 
                             {% if review.comment %}
@@ -79,11 +95,17 @@
                             {% endif %} <!-- Accessibility ratings if provided -->
                             {% if review.step_free_access or review.restroom_accessible or review.signage_clear %}
                             <div class="flex flex-wrap gap-2 text-xs">
-                                {% if review.step_free_access %} <span class="px-2 py-1 bg-slate-100 rounded">Step-free: {{ review.step_free_access }}/5</span> {% endif %} {% if review.restroom_accessible %} <span class="px-2 py-1 bg-slate-100 rounded">Restroom: {{ review.restroom_accessible }}/5</span>
-                                {% endif %} {% if review.signage_clear %} <span class="px-2 py-1 bg-slate-100 rounded">Signage: {{ review.signage_clear }}/5</span> {% endif %} {% if review.staff_supportive %} <span class="px-2 py-1 bg-slate-100 rounded">Staff: {{ review.staff_supportive }}/5</span>
-                                {% endif %} {% if review.sensory_friendly %} <span class="px-2 py-1 bg-slate-100 rounded">Sensory: {{ review.sensory_friendly }}/5</span> {% endif %}
+                                {% if review.step_free_access %} <span class="px-2 py-1 bg-slate-100 rounded">Step-free:
+                                    {{ review.step_free_access }}/5</span> {% endif %} {% if review.restroom_accessible %} <span class="px-2 py-1 bg-slate-100 rounded">Restroom: {{ review.restroom_accessible }}/5</span>
+                                {% endif %} {% if review.signage_clear %} <span
+                                    class="px-2 py-1 bg-slate-100 rounded">Signage: {{ review.signage_clear }}/5</span>
+                                {% endif %} {% if review.staff_supportive %} <span
+                                    class="px-2 py-1 bg-slate-100 rounded">Staff: {{ review.staff_supportive }}/5</span>
+                                {% endif %} {% if review.sensory_friendly %} <span
+                                    class="px-2 py-1 bg-slate-100 rounded">Sensory: {{ review.sensory_friendly }}/5</span> {% endif %}
                             </div>
-                            {% endif %} </article>
+                            {% endif %}
+                        </article>
                         {% endfor %}
                     </div>
                     {% else %} <div class="text-center py-8 text-slate-400">
@@ -91,6 +113,100 @@
                         <p>No reviews yet. Be the first to share your experience!</p>
                     </div>
                     {% endif %}
+                </section>
+
+                <!-- Write a Review Form -->
+                <section class="bg-white rounded-xl p-6 shadow-sm border border-slate-100" id="write-review">
+                    <h2 class="text-xl font-bold text-[#26354E] mb-6 flex items-center gap-2">
+                        <i data-lucide="edit-3" class="w-5 h-5 text-[#FF431E]"></i>
+                        Write a Review
+                    </h2>
+
+                    <form method="post" action="{% url 'submit_review' pk=listing.pk %}" class="space-y-6">
+                        {% csrf_token %}
+
+                        <!-- Author Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="id_author_name" class="block text-sm font-semibold text-slate-700 mb-2">Your
+                                    Name *</label>
+                                {{ review_form.author_name }}
+                                {% if review_form.author_name.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ review_form.author_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="id_author_email"
+                                    class="block text-sm font-semibold text-slate-700 mb-2">Email (optional)</label>
+                                {{ review_form.author_email }}
+                            </div>
+                        </div>
+
+                        <!-- Overall Rating -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Overall Rating *</label>
+                            <div class="flex items-center gap-2" id="rating-picker">
+                                {% for i in "12345" %}
+                                <button type="button" data-rating="{{ forloop.counter }}"
+                                    class="star-btn w-10 h-10 rounded-full border-2 border-slate-200 hover:border-amber-400 flex items-center justify-center transition-colors">
+                                    <i data-lucide="star" class="w-6 h-6 text-slate-300"></i>
+                                </button>
+                                {% endfor %}
+                                <span id="rating-text" class="ml-3 text-sm text-slate-500">Select a rating</span>
+                            </div>
+                            {{ review_form.rating }}
+                            {% if review_form.rating.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ review_form.rating.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Comment -->
+                        <div>
+                            <label for="id_comment" class="block text-sm font-semibold text-slate-700 mb-2">Your
+                                Review</label>
+                            {{ review_form.comment }}
+                        </div>
+
+                        <!-- Accessibility Ratings -->
+                        <div class="border-t border-slate-100 pt-6">
+                            <h3 class="text-md font-semibold text-[#26354E] mb-4 flex items-center gap-2">
+                                <i data-lucide="accessibility" class="w-4 h-4 text-green-600"></i>
+                                Accessibility Ratings (Optional)
+                            </h3>
+                            <p class="text-sm text-slate-500 mb-4">Rate specific accessibility features from 1 (poor) to
+                                5 (excellent).</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {% for field in review_form %}
+                                {% if field.name in "step_free_access,restroom_accessible,signage_clear,staff_supportive,sensory_friendly" %}
+                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                    <span class="text-sm font-medium text-slate-700">{{ field.label }}</span>
+                                    <div class="flex gap-1 accessibility-rating-picker"
+                                        data-field="{{ field.id_for_label }}">
+                                        {% for i in "12345" %}
+                                        <button type="button" data-value="{{ forloop.counter }}"
+                                            class="w-7 h-7 rounded text-xs font-bold border border-slate-200 hover:bg-green-100 hover:border-green-300 transition-colors">
+                                            {{ forloop.counter }}
+                                        </button>
+                                        {% endfor %}
+                                    </div>
+                                    {{ field }}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="flex items-center justify-between pt-4">
+                            <p class="text-sm text-slate-500">* Required fields</p>
+                            <button type="submit"
+                                class="px-6 py-3 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors flex items-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
                 </section>
             </div>
 
@@ -103,26 +219,33 @@
                     <div class="space-y-4 text-sm">
                         {% if listing.address %} <div class="flex items-start gap-3">
                             <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i>
-                            <span>{{ listing.address }}{% if listing.city %}, {{ listing.city }}{% endif %}{% if listing.country %}, {{ listing.country }}{% endif %}</span> </div> {% else %}
+                            <span>{{ listing.address }}{% if listing.city %}, {{ listing.city }}{% endif %}{% if listing.country %}, {{ listing.country }}{% endif %}</span>
+                        </div> {% else %}
                         <div class="flex items-start gap-3">
                             <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i>
-                            <span>{{ listing.city }}, {{ listing.country }}</span> </div>
+                            <span>{{ listing.city }}, {{ listing.country }}</span>
+                        </div>
                         {% endif %} {% if listing.phone %} <div class="flex items-center gap-3">
                             <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
-                            <a href="tel:{{ listing.phone }}" class="text-[#FF431E] hover:underline">{{ listing.phone }}</a> </div>
+                            <a href="tel:{{ listing.phone }}" class="text-[#FF431E] hover:underline">{{ listing.phone }}</a>
+                        </div>
                         {% endif %} {% if listing.email %} <div class="flex items-center gap-3">
                             <i data-lucide="mail" class="w-5 h-5 text-slate-400"></i>
-                            <a href="mailto:{{ listing.email }}" class="text-[#FF431E] hover:underline">{{ listing.email }}</a> </div>
+                            <a href="mailto:{{ listing.email }}" class="text-[#FF431E] hover:underline">{{ listing.email }}</a>
+                        </div>
                         {% endif %} {% if listing.website %} <div class="flex items-center gap-3">
                             <i data-lucide="globe" class="w-5 h-5 text-slate-400"></i>
-                            <a href="{{ listing.website }}" target="_blank" rel="noopener" class="text-[#FF431E] hover:underline truncate">{{ listing.website }}</a> </div>
+                            <a href="{{ listing.website }}" target="_blank" rel="noopener"
+                                class="text-[#FF431E] hover:underline truncate">{{ listing.website }}</a>
+                        </div>
                         {% endif %}
                     </div>
 
                     <!-- Mini Map -->
                     {% if listing.lat and listing.lng %} <div class="mt-6">
                         <div id="mini-map" class="w-full h-48 rounded-lg bg-slate-100"></div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ listing.lat }},{{ listing.lng }}" target="_blank" rel="noopener"
+                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ listing.lat }},{{ listing.lng }}"
+                            target="_blank" rel="noopener"
                             class="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors">
                             <i data-lucide="navigation" class="w-4 h-4"></i> Get Directions
                         </a>
@@ -170,7 +293,8 @@
         const mapEl = document.getElementById('mini-map');
         if (!mapEl || !window.google) return;
 
-        const pos = { lat: {{ listing.lat }}, lng: {{ listing.lng }} };
+        const pos = { lat: {{ listing.lat }
+    }, lng: { { listing.lng } } };
     const map = new google.maps.Map(mapEl, {
         center: pos,
         zoom: 15,
@@ -178,7 +302,7 @@
         zoomControl: true,
     });
     new google.maps.Marker({ position: pos, map });
-  }
+    }
 
     if (window.google && window.google.maps) {
         initMiniMap();
@@ -187,5 +311,67 @@
             setTimeout(initMiniMap, 500);
         });
     }
-    {% endif %} </script>
+    {% endif %}
+
+    // Star Rating Picker
+    const ratingPicker = document.getElementById('rating-picker');
+    const ratingInput = document.getElementById('id_rating');
+    const ratingText = document.getElementById('rating-text');
+    const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+    if (ratingPicker && ratingInput) {
+        const starBtns = ratingPicker.querySelectorAll('.star-btn');
+
+        starBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const rating = parseInt(btn.dataset.rating);
+                ratingInput.value = rating;
+
+                starBtns.forEach((b, i) => {
+                    const icon = b.querySelector('i');
+                    if (i < rating) {
+                        b.classList.add('border-amber-400', 'bg-amber-50');
+                        b.classList.remove('border-slate-200');
+                        icon.classList.add('fill-amber-400', 'text-amber-400');
+                        icon.classList.remove('text-slate-300');
+                    } else {
+                        b.classList.remove('border-amber-400', 'bg-amber-50');
+                        b.classList.add('border-slate-200');
+                        icon.classList.remove('fill-amber-400', 'text-amber-400');
+                        icon.classList.add('text-slate-300');
+                    }
+                });
+
+                ratingText.textContent = ratingLabels[rating];
+                ratingText.classList.remove('text-slate-500');
+                ratingText.classList.add('text-amber-600', 'font-semibold');
+            });
+        });
+    }
+
+    // Accessibility Rating Pickers
+    const accessibilityPickers = document.querySelectorAll('.accessibility-rating-picker');
+    accessibilityPickers.forEach(picker => {
+        const fieldId = picker.dataset.field;
+        const input = document.getElementById(fieldId);
+        const buttons = picker.querySelectorAll('button');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const value = parseInt(btn.dataset.value);
+                input.value = value;
+
+                buttons.forEach((b, i) => {
+                    if (i < value) {
+                        b.classList.add('bg-green-500', 'text-white', 'border-green-500');
+                        b.classList.remove('border-slate-200');
+                    } else {
+                        b.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+                        b.classList.add('border-slate-200');
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}
