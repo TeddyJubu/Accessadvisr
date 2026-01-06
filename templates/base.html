@@ -23,7 +23,8 @@
           class="h-10 w-auto">
       </a>
       <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
-        <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Public</a>
+        <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Home</a>
+        <a href="{% url 'listings_list' %}" class="hover:text-[#FF431E]">Listings</a>
         <a href="{% url 'admin_page' %}" class="hover:text-[#FF431E]">Admin</a>
       </nav>
       <button class="lg:hidden text-slate-600" id="mobile-menu-button" aria-controls="mobile-menu"

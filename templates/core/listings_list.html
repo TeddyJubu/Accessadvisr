@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block title %}Explore Accessible Places | AccessAdvisr{% endblock %} {% block content %} <div class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+    <!-- Hero Header -->
+    <section class="bg-[#26354E] text-white py-12">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Explore Accessible Places</h1>
+            <p class="text-slate-300">Find venues with verified accessibility features near you.</p>
+        </div>
+    </section>
+
+    <!-- Filters Bar -->
+    <section class="bg-white border-b sticky top-20 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <form method="get" class="flex flex-wrap gap-3 items-center">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search venues..." class="flex-1 min-w-[200px] px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none"
+                    aria-label="Search keywords">
+
+                <input type="text" name="location" value="{{ selected_location }}" placeholder="City or country..."
+                    class="w-40 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none"
+                    aria-label="Location">
+
+                <select name="category" aria-label="Category filter"
+                    class="w-44 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none bg-white">
+                    <option value="all">All Categories</option>
+                    {% for cat in categories %} <option value="{{ cat.name }}" {% if selected_category  ==  cat.name %}selected{% endif %}>{{ cat.name }}</option> {% endfor %} </select> <select name="status" aria-label="Status filter"
+                    class="w-32 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none bg-white">
+                    <option value="all">All Status</option>
+                    <option value="open" {% if selected_status == "open" %}selected{% endif %}>Open</option> <option value="closed" {% if selected_status == "closed" %}selected{% endif %}>Closed</option> </select>
+
+                <button type="submit"
+                    class="px-6 py-2 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors">
+                    <i data-lucide="search" class="w-4 h-4 inline-block mr-1"></i> Search
+                </button>
+
+                {% if query or selected_category or selected_location or selected_status %} <a href="{% url 'listings_list' %}" class="text-sm text-slate-500 hover:text-[#FF431E]">Clear filters</a>
+                {% endif %}
+            </form>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <p class="text-slate-600">
+                <span class="font-semibold">{{ listings.paginator.count }}</span> accessible venues found
+            </p>
+            <a href="{% url 'home' %}" class="text-sm text-[#FF431E] hover:underline flex items-center gap-1"> <i data-lucide="map" class="w-4 h-4"></i> View on Map
+            </a>
+        </div>
+
+        {% if listings %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for listing in listings %} <a href="{% url 'listing_detail' listing.pk %}" class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-[#FF431E]/30 transition-all overflow-hidden">
+                <!-- Image placeholder -->
+                <div class="h-40 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                    {% if listing.photos %}
+                    <img src="{{ listing.photos.0 }}" alt="{{ listing.name }}" class="w-full h-full object-cover"> {% else %} <i data-lucide="map-pin" class="w-12 h-12 text-slate-300"></i>
+                    {% endif %}
+                </div>
+
+                <div class="p-4">
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <h3 class="font-bold text-[#26354E] group-hover:text-[#FF431E] transition-colors line-clamp-1">
+                            {{ listing.name }}
+                        </h3>
+                        {% if listing.rating %} <span class="flex items-center gap-1 text-sm font-semibold text-amber-500 shrink-0">
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
+                            {{ listing.rating }} </span>
+                        {% endif %}
+                    </div>
+
+                    {% if listing.subtitle %} <p class="text-sm text-slate-500 line-clamp-2 mb-3">{{ listing.subtitle }}</p>
+                    {% endif %}
+
+                    <div class="flex items-center gap-2 text-xs text-slate-400 mb-3">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i>
+                        <span>{{ listing.city }}, {{ listing.country }}</span> </div>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-1">
+                        {% for cat in listing.categories|slice:":2" %} <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full">{{ cat }}</span>
+                        {% endfor %}
+                        <span
+                            class="px-2 py-0.5 {% if listing.status  ==  'open' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} text-xs rounded-full font-medium"> {{ listing.status|title }} </span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if listings.has_other_pages %} <nav class="mt-10 flex justify-center" aria-label="Pagination">
+            <ul class="flex items-center gap-2">
+                {% if listings.has_previous %}
+                <li>
+                    <a href="?page={{ listings.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50"> ← Previous
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="px-4 py-2 text-sm text-slate-500">
+                    Page {{ listings.number }} of {{ listings.paginator.num_pages }} </li>
+
+                {% if listings.has_next %} <li>
+                    <a href="?page={{ listings.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50">
+                        Next →
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %} {% else %} <!-- Empty State -->
+        <div class="text-center py-16">
+            <i data-lucide="search-x" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+            <h2 class="text-xl font-semibold text-slate-600 mb-2">No venues found</h2>
+            <p class="text-slate-400 mb-6">Try adjusting your search filters or explore all venues.</p>
+            <a href="{% url 'listings_list' %}"
+                class="px-6 py-3 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19]">
+                View All Venues
+            </a>
+        </div>
+        {% endif %} </section>
+</div>
+
+<script>lucide.createIcons();</script>
+{% endblock %}
