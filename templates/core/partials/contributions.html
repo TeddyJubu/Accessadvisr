@@ -1,0 +1,92 @@
+<!-- templates/core/partials/contributions.html -->
+<section class="container mx-auto px-4 py-20">
+    <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-[#26354E] mb-4 tracking-tight">Most Recent <span
+                class="text-[#FF431E]">Contributions</span></h2>
+        <p class="text-slate-500 max-w-4xl mx-auto text-base">Check Out The Most Recent Contributions From Our Members.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Review 1 -->
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col shadow-sm">
+            <div class="p-6 flex items-center gap-4">
+                <img src="https://accessadvisr.com/wp-content/uploads/2025/11/thumb-Screenshot_20240725_174546_Facebook.jpg"
+                    class="w-16 h-16 rounded-full object-cover" alt="">
+                <div>
+                    <h4 class="font-bold text-[#26354E] text-lg">ecologisttobe</h4>
+                    <div class="flex gap-1 mt-1 text-[#FFC107]">
+                        {% for i in "12345" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            class="w-4 h-4">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#FF431E] p-8 text-white text-sm font-medium leading-relaxed flex-grow flex items-center">
+                ecologisttobe reviewed Vaillant Live, 2 Colyear St, Derby DE1 1LA
+            </div>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col shadow-sm">
+            <div class="p-6 flex items-center gap-4">
+                <img src="https://accessadvisr.com/wp-content/uploads/2025/11/thumb-20.jpg"
+                    class="w-16 h-16 rounded-full object-cover" alt="">
+                <div>
+                    <h4 class="font-bold text-[#26354E] text-lg">Rob Trent</h4>
+                    <div class="flex gap-1 mt-1">
+                        {% for i in "123" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#FFC107" class="w-4 h-4">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        {% endfor %}
+                        {% for i in "45" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#E5E7EB" class="w-4 h-4">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#FF431E] p-8 text-white text-sm font-medium leading-relaxed flex-grow flex items-center">
+                Rob Trent reviewed Boathouse Swanwick, Swanwick Marina, Swanwick Shore Rd
+            </div>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col shadow-sm">
+            <div class="p-6 flex items-center gap-4">
+                <img src="https://accessadvisr.com/wp-content/uploads/2025/11/thumb-IMG_5760-rotated.jpeg"
+                    class="w-16 h-16 rounded-full object-cover" alt="">
+                <div>
+                    <h4 class="font-bold text-[#26354E] text-lg">Matt</h4>
+                    <div class="flex gap-1 mt-1 text-[#FFC107]">
+                        {% for i in "12345" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            class="w-4 h-4">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#FF431E] p-8 text-white text-sm font-medium leading-relaxed flex-grow flex items-center">
+                Matt rated Premier Inn London Wembley Park hotel, 151 Wembley Park Dr, Wembley Park
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-12">
+        <button
+            class="bg-[#FF431E] hover:bg-[#d63515] text-white py-3 px-10 rounded font-bold text-sm transition-colors shadow-sm">
+            See All
+        </button>
+    </div>
+</section>

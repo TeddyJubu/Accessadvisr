@@ -1,0 +1,31 @@
+<!-- templates/core/partials/search_bar.html -->
+<div class="container mx-auto px-4 relative -mt-10 z-20 mb-20">
+    <div
+        class="bg-white p-6 rounded shadow-xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center border border-gray-100">
+        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+            <i data-lucide="edit-3" class="w-5 h-5 text-gray-400"></i>
+            <input type="text" placeholder="Keywords..." class="w-full outline-none text-slate-600 placeholder-gray-400"
+                aria-label="Keywords">
+        </div>
+        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+            <i data-lucide="layers" class="w-5 h-5 text-gray-400"></i>
+            <select class="w-full outline-none text-slate-600 bg-transparent cursor-pointer"
+                aria-label="Filter by category">
+                <option>Filter by category</option>
+                <option>Accommodation</option>
+                <option>Food &amp; Drink</option>
+            </select>
+        </div>
+        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+            <i data-lucide="map-pin" class="w-5 h-5 text-gray-400"></i>
+            <input type="text" placeholder="Location" class="w-full outline-none text-slate-600 placeholder-gray-400"
+                aria-label="Location">
+        </div>
+        <div>
+            <button
+                class="w-full bg-[#FF431E] hover:bg-[#e03615] text-white py-3 px-6 rounded font-bold transition-colors shadow-lg shadow-orange-200">
+                Search
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,143 @@
+<!-- templates/core/partials/explore_cards.html -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-[#26354E] mb-4 tracking-tight">Explore Most Rated <span
+                class="text-[#FF431E]">Places</span></h2>
+        <p class="text-slate-500 max-w-2xl mx-auto">Discover the most rated places reviewed by our community.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% comment %} Card 1 {% endcomment %}
+        <div
+            class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+            <div class="relative h-60 overflow-hidden">
+                <img src="https://accessadvisr.com/wp-content/uploads/2020/01/exbury-gardens-steam-railway-540x300.jpg"
+                    alt="Exbury Gardens"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                <div class="absolute top-4 left-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-sm">$60
+                    - $85</div>
+                <div
+                    class="absolute bottom-4 left-4 bg-[#FF431E] text-white text-xs font-semibold px-2 py-1 rounded-sm">
+                    4.0</div>
+                <button
+                    class="absolute top-4 right-4 bg-black/40 hover:bg-[#FF431E] text-white p-2 rounded-full transition-colors"
+                    aria-label="Save">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 relative">
+                <div class="absolute -top-8 right-6">
+                    <img src="https://accessadvisr.com/wp-content/uploads/2020/01/user-3-150x150.jpg"
+                        class="w-16 h-16 rounded-full border-4 border-white shadow-md" alt="">
+                </div>
+                <h3 class="text-lg font-bold text-[#26354E] mb-1 hover:text-[#FF431E] cursor-pointer">Exbury Gardens
+                    &amp; Steam Railway</h3>
+                <p class="text-xs text-slate-400 mb-4">Villa, food for you</p>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i> New York, USA
+                </div>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-4">
+                    <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i> +88-123-456-789
+                </div>
+                <div class="border-t border-gray-100 pt-4 flex items-center justify-between mt-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-gray-100 text-slate-600 text-xs px-2 py-1 rounded">Food &amp; Restaurants</span>
+                        <span class="bg-gray-100 text-slate-400 text-xs px-2 py-1 rounded">+1</span>
+                    </div>
+                    <span class="text-[#FF431E] text-sm font-semibold">Open</span>
+                </div>
+            </div>
+        </div>
+
+        {% comment %} Card 2 {% endcomment %}
+        <div
+            class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+            <div class="relative h-60 overflow-hidden">
+                <img src="https://accessadvisr.com/wp-content/uploads/2020/01/Hotel-Sercotel-La-Borona-540x300.jpg"
+                    alt="Hotel Sercotel"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                <div class="absolute top-4 left-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-sm">
+                    $100 - $120</div>
+                <div
+                    class="absolute bottom-4 left-4 bg-[#FF431E] text-white text-xs font-semibold px-2 py-1 rounded-sm">
+                    4.5</div>
+                <button
+                    class="absolute top-4 right-4 bg-black/40 hover:bg-[#FF431E] text-white p-2 rounded-full transition-colors"
+                    aria-label="Save">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 relative">
+                <div class="absolute -top-8 right-6">
+                    <img src="https://accessadvisr.com/wp-content/uploads/2020/01/user-2-150x150.jpg"
+                        class="w-16 h-16 rounded-full border-4 border-white shadow-md" alt="">
+                </div>
+                <h3
+                    class="text-lg font-bold text-[#26354E] mb-1 hover:text-[#FF431E] cursor-pointer flex items-center gap-2">
+                    Hotel Sercotel La Boroña
+                    <span class="bg-green-500 text-white rounded-full p-0.5"><i data-lucide="check"
+                            class="w-2 h-2"></i></span>
+                </h3>
+                <p class="text-xs text-slate-400 mb-4">Outdoor, luxury for you</p>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i> New York, USA
+                </div>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-4">
+                    <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i> +89-456-888-666
+                </div>
+                <div class="border-t border-gray-100 pt-4 flex items-center justify-between mt-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-gray-100 text-slate-600 text-xs px-2 py-1 rounded">Education</span>
+                        <span class="bg-gray-100 text-slate-400 text-xs px-2 py-1 rounded">+2</span>
+                    </div>
+                    <span class="text-[#FF431E] text-sm font-semibold">Open</span>
+                </div>
+            </div>
+        </div>
+
+        {% comment %} Card 3 {% endcomment %}
+        <div
+            class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+            <div class="relative h-60 overflow-hidden">
+                <img src="https://accessadvisr.com/wp-content/uploads/2020/01/swansea.com-stadium-540x300.jpg"
+                    alt="Swansea Stadium"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                <div class="absolute top-4 left-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-sm">$20
+                    - $50</div>
+                <div
+                    class="absolute bottom-4 left-4 bg-[#FF431E] text-white text-xs font-semibold px-2 py-1 rounded-sm">
+                    4.1</div>
+                <button
+                    class="absolute top-4 right-4 bg-black/40 hover:bg-[#FF431E] text-white p-2 rounded-full transition-colors"
+                    aria-label="Save">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 relative">
+                <div class="absolute -top-8 right-6">
+                    <img src="https://accessadvisr.com/wp-content/uploads/2020/01/user-1-150x150.png"
+                        class="w-16 h-16 rounded-full border-4 border-white shadow-md bg-white" alt="">
+                </div>
+                <h3
+                    class="text-lg font-bold text-[#26354E] mb-1 hover:text-[#FF431E] cursor-pointer flex items-center gap-2">
+                    Swansea.com Stadium
+                    <span class="bg-green-500 text-white rounded-full p-0.5"><i data-lucide="check"
+                            class="w-2 h-2"></i></span>
+                </h3>
+                <p class="text-xs text-slate-400 mb-4">Active for you, my friend</p>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i> New York, USA
+                </div>
+                <div class="flex items-center gap-1 text-slate-500 text-sm mb-4">
+                    <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i> +89-123-456-789
+                </div>
+                <div class="border-t border-gray-100 pt-4 flex items-center justify-between mt-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-gray-100 text-slate-600 text-xs px-2 py-1 rounded">Sport</span>
+                    </div>
+                    <span class="text-[#FF431E] text-sm font-semibold">Open</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

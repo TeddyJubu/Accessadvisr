@@ -1,0 +1,32 @@
+<!-- templates/core/admin.html -->
+{% extends "base.html" %}
+
+{% block title %}AccessAdvisr — Admin{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-12">
+    <h1 class="text-2xl font-bold text-[#26354E] mb-6">Admin Dashboard (Preview)</h1>
+    <p class="text-slate-600 mb-8">Authentication will be added later. This page is public for now.</p>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white border border-gray-200 rounded p-6">
+            <h2 class="font-semibold mb-4">Seed Sample Data</h2>
+            <form method="post" action="">
+                {% csrf_token %}
+                <button class="bg-[#FF431E] hover:bg-[#e03615] text-white px-4 py-2 rounded font-bold">Seed
+                    Listings</button>
+            </form>
+        </div>
+        <div class="bg-white border border-gray-200 rounded p-6">
+            <h2 class="font-semibold mb-4">Current Listings (Mock)</h2>
+            <ul class="space-y-2">
+                <li class="flex justify-between"><span>Exbury Gardens &amp; Steam Railway</span><span
+                        class="text-slate-500">$60–$85 • 4.0 • Open</span></li>
+                <li class="flex justify-between"><span>Hotel Sercotel La Boroña</span><span
+                        class="text-slate-500">$100–$120 • 4.5 • Open</span></li>
+                <li class="flex justify-between"><span>Swansea.com Stadium</span><span class="text-slate-500">$20–$50 •
+                        4.1 • Open</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

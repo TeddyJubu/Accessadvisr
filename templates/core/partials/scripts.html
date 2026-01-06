@@ -1,0 +1,31 @@
+<!-- templates/core/partials/scripts.html -->
+<script>
+    // Smooth scroll back to top with reduced motion
+    const backToTop = document.getElementById('back-to-top');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    backToTop?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+    });
+
+    // Stats counters: use unique IDs and intersection observer
+    function animateCounter(el) {
+        const target = parseInt(el.getAttribute('data-target'), 10);
+        const duration = 2000, stepTime = 20;
+        const steps = Math.floor(duration / stepTime);
+        let current = 0, inc = target / steps;
+        const t = setInterval(() => {
+            current += inc;
+            if (current >= target) { el.textContent = target + "+"; clearInterval(t); }
+            else { el.textContent = Math.floor(current) + "+"; }
+        }, stepTime);
+    }
+
+    const counters = Array.from(document.querySelectorAll('[data-target]'));
+    const obs = new IntersectionObserver((entries, o) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) { animateCounter(entry.target); o.unobserve(entry.target); }
+        });
+    }, { threshold: 0.5 });
+    counters.forEach(c => obs.observe(c));
+</script>
