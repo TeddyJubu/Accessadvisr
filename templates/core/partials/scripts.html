@@ -28,4 +28,217 @@
         });
     }, { threshold: 0.5 });
     counters.forEach(c => obs.observe(c));
+
+    // Google Maps Integration
+    (function () {
+        // Define apiUrl at the top so it's always accessible
+        const apiUrl = "{% url 'listings_api' %}";
+        let map, markers = [], markerCluster, infoWindow;
+
+        if (!window.google || !window.google.maps) {
+            console.log('Google Maps not loaded - waiting...');
+            window.addEventListener('load', initializeMapWhenReady);
+            return;
+        }
+
+        function initMap() {
+            const mapRoot = document.getElementById('map');
+            if (!mapRoot) {
+                console.log('Map container element not found');
+                return;
+            }
+
+            map = new google.maps.Map(mapRoot, {
+                center: { lat: 40.7128, lng: -74.0060 }, // NYC default
+                zoom: 11,
+                mapTypeControl: false,
+                streetViewControl: false,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+            loadListings();
+
+            // Places Autocomplete for location input
+            const locInput = document.querySelector('[aria-label="Location"]');
+            if (locInput && google.maps.places) {
+                const autocomplete = new google.maps.places.Autocomplete(locInput, {
+                    types: ['(cities)']
+                });
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.geometry && place.geometry.location) {
+                        map.panTo(place.geometry.location);
+                        map.setZoom(12);
+                    }
+                    submitSearch();
+                });
+            }
+        }
+
+        function clearMarkers() {
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+            if (markerCluster) {
+                markerCluster.clearMarkers();
+                markerCluster = null;
+            }
+        }
+
+        async function loadListings(params = {}) {
+            try {
+                const url = new URL(apiUrl, window.location.origin);
+                Object.entries(params).forEach(([k, v]) => { if (v) url.searchParams.set(k, v); });
+                const res = await fetch(url.toString());
+                const json = await res.json();
+                renderMarkers(json.listings);
+            } catch (error) {
+                console.error('Error loading listings:', error);
+            }
+        }
+
+        function renderMarkers(listings) {
+            if (!map) return;
+
+            clearMarkers();
+
+            listings.forEach(l => {
+                const marker = new google.maps.Marker({
+                    position: { lat: l.lat, lng: l.lng },
+                    map,
+                    title: l.name,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 10,
+                        fillColor: '#FF431E',
+                        fillOpacity: 0.9,
+                        strokeColor: '#fff',
+                        strokeWeight: 2,
+                    },
+                    label: l.rating ? {
+                        text: String(l.rating),
+                        color: 'white',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                    } : undefined,
+                });
+
+                marker.addListener('click', () => {
+                    const priceRange = l.priceMin && l.priceMax ? `$${l.priceMin} - $${l.priceMax}` : 'Price not available';
+                    const categories = l.categories && l.categories.length ? l.categories.join(', ') : 'No category';
+
+                    infoWindow.setContent(`
+          <div class="p-3 min-w-[200px]">
+            <div class="font-bold text-[#26354E] text-base mb-1">${l.name}</div>
+            ${l.subtitle ? `<div class="text-sm text-slate-600 mb-2">${l.subtitle}</div>` : ''}
+            <div class="mt-2 text-xs text-slate-500">
+              <div class="flex items-center gap-1 mb-1">
+                <svg class="w-3 h-3 text-[#FF431E]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                ${l.city}, ${l.country}
+              </div>
+              <div class="mb-1">💰 ${priceRange}</div>
+              <div class="mb-1">⭐ Rating: ${l.rating || 'N/A'}</div>
+              <div class="mb-1">📂 ${categories}</div>
+              <div class="font-semibold ${l.status === 'open' ? 'text-green-600' : 'text-red-600'}">
+                ${l.status ? l.status.toUpperCase() : 'UNKNOWN'}
+              </div>
+            </div>
+          </div>
+        `);
+                    infoWindow.open(map, marker);
+                });
+
+                markers.push(marker);
+            });
+
+            // Optional clustering using markerClusterer
+            if (window.markerClusterer && markers.length > 0) {
+                markerCluster = new markerClusterer.MarkerClusterer({
+                    map,
+                    markers,
+                    renderer: {
+                        render: ({ count, position }) => {
+                            return new google.maps.Marker({
+                                position,
+                                icon: {
+                                    url: `data:image/svg+xml,${encodeURIComponent(`
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#FF431E" stroke="white" stroke-width="2"/>
+                    <text x="20" y="25" text-anchor="middle" fill="white" font-size="14" font-weight="bold">${count}</text>
+                  </svg>
+                `)}`,
+                                    scaledSize: new google.maps.Size(40, 40),
+                                },
+                                label: { text: String(count), color: 'white', fontSize: '12px' },
+                                zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+                            });
+                        }
+                    }
+                });
+            }
+
+            if (listings.length) {
+                const bounds = new google.maps.LatLngBounds();
+                listings.forEach(l => bounds.extend({ lat: l.lat, lng: l.lng }));
+                map.fitBounds(bounds, 64);
+            }
+        }
+
+        function submitSearch() {
+            const q = document.querySelector('[aria-label="Keywords"]')?.value || '';
+            const category = document.querySelector('[aria-label="Filter by category"]')?.value || '';
+            const location = document.querySelector('[aria-label="Location"]')?.value || '';
+            loadListings({ q, category, location });
+        }
+
+        function initializeMapWhenReady() {
+            if (window.google && window.google.maps) {
+                initMapOnDOMReady();
+            } else {
+                setTimeout(initializeMapWhenReady, 100);
+            }
+        }
+
+        function initMapOnDOMReady() {
+            // Wire search button
+            const btn = document.querySelector('.shadow-orange-200');
+            btn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                submitSearch();
+            });
+
+            // Map container already exists in hero_map.html as <div id="map"></div>
+            // No need to create it dynamically
+
+            // Initialize map
+            initMap();
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMapWhenReady);
+        } else {
+            initializeMapWhenReady();
+        }
+
+    })();
 </script>
+
+<style>
+    /* Marker label styling */
+    .gm-style-iw-d {
+        overflow: auto !important;
+    }
+
+    .gm-style-iw {
+        border-radius: 8px;
+    }
+</style>

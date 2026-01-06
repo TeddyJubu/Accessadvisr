@@ -1,31 +1,41 @@
 <!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}AccessAdvisr{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  {% if GOOGLE_MAPS_BROWSER_KEY %}
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_BROWSER_KEY }}&libraries=places"></script>
+  <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+  {% endif %}
 </head>
+
 <body class="bg-white text-slate-700 antialiased font-manrope">
   <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
     <div class="container mx-auto px-4 h-20 flex items-center justify-between">
       <a href="{% url 'home' %}" class="flex items-center gap-2">
-        <img src="https://accessadvisr.com/wp-content/uploads/2020/02/accessAdvisr_logo.jpeg" alt="AccessAdvisr" class="h-10 w-auto">
+        <img src="https://accessadvisr.com/wp-content/uploads/2020/02/accessAdvisr_logo.jpeg" alt="AccessAdvisr"
+          class="h-10 w-auto">
       </a>
       <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
         <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Public</a>
         <a href="{% url 'admin_page' %}" class="hover:text-[#FF431E]">Admin</a>
       </nav>
-      <button class="lg:hidden text-slate-600" id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false">
+      <button class="lg:hidden text-slate-600" id="mobile-menu-button" aria-controls="mobile-menu"
+        aria-expanded="false">
         <i data-lucide="menu" class="w-6 h-6"></i>
       </button>
     </div>
   </header>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="lg:hidden fixed inset-0 bg-white/95 backdrop-blur-sm hidden" role="dialog" aria-modal="true">
+  <div id="mobile-menu" class="lg:hidden fixed inset-0 bg-white/95 backdrop-blur-sm hidden" role="dialog"
+    aria-modal="true">
     <nav class="p-6 space-y-4 text-slate-700">
       <a href="{% url 'home' %}" class="block font-semibold">Public</a>
       <a href="{% url 'admin_page' %}" class="block font-semibold">Admin</a>
@@ -42,11 +52,12 @@
     const menuBtn = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileClose = document.getElementById('mobile-close');
-    function openMenu(){ mobileMenu.classList.remove('hidden'); menuBtn.setAttribute('aria-expanded','true'); }
-    function closeMenu(){ mobileMenu.classList.add('hidden'); menuBtn.setAttribute('aria-expanded','false'); }
+    function openMenu() { mobileMenu.classList.remove('hidden'); menuBtn.setAttribute('aria-expanded', 'true'); }
+    function closeMenu() { mobileMenu.classList.add('hidden'); menuBtn.setAttribute('aria-expanded', 'false'); }
     menuBtn?.addEventListener('click', openMenu);
     mobileClose?.addEventListener('click', closeMenu);
-    mobileMenu?.addEventListener('click', (e)=>{ if(e.target===mobileMenu) closeMenu(); });
+    mobileMenu?.addEventListener('click', (e) => { if (e.target === mobileMenu) closeMenu(); });
   </script>
 </body>
+
 </html>
