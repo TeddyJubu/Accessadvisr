@@ -1,0 +1,42 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Your review is now live!{% endblock %}
+
+{% block content %}
+<h2>Your review is now live! 🎉</h2>
+
+<p>Hi {{ review.author_name }},</p>
+
+<p>
+    Great news! Your review of <strong>{{ listing.name }}</strong> has been
+    approved and is now visible to the AccessAdvisr community.
+</p>
+
+<div class="highlight-box">
+    <strong>{{ listing.name }}</strong><br>
+    📍 {{ listing.city }}, {{ listing.country }}<br>
+    <span class="rating">★ Your rating: {{ review.rating }}/5</span>
+</div>
+
+{% if review.comment %}
+<p><em>"{{ review.comment|truncatewords:50 }}"</em></p>
+{% endif %}
+
+<p>
+    Your accessibility insights are now helping others in the community make
+    informed decisions about visiting {{ listing.name }}.
+</p>
+
+<p style="text-align: center;">
+    <a href="{{ listing_url }}" class="btn">View Your Review</a>
+</p>
+
+<p>
+    Thank you for contributing to a more accessible world!
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>The AccessAdvisr Team</strong>
+</p>
+{% endblock %}

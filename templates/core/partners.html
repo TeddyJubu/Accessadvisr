@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Partners & Sponsors | AccessAdvisr{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative py-24 bg-slate-950 overflow-hidden">
+    <!-- Abstract Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-[radial-gradient(#FF431E_1px,transparent_1px)] [background-size:20px_20px]">
+        </div>
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950">
+        </div>
+    </div>
+
+    <!-- Animated Glows -->
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#FF431E]/20 rounded-full blur-[100px] animate-pulse"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-[#FF431E]/10 rounded-full blur-[100px] animate-pulse"
+        style="animation-delay: 2s"></div>
+
+    <div class="container mx-auto px-4 relative z-10 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-black text-white mb-8 leading-tight">
+                Our <span class="text-[#FF431E]">Partners</span> & Supporters
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
+                Powering the movement of <span class="text-white font-bold">#DisabledPeopleGoingPlaces</span> through
+                collaboration and shared values.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Sponsors Section -->
+<section class="py-24 bg-white relative">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center gap-4 mb-12">
+            <h2 class="text-3xl font-bold text-slate-900">Featured Sponsors</h2>
+            <div class="flex-grow h-px bg-slate-200"></div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            {% for sponsor in sponsors %}
+            <div
+                class="group bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:border-[#FF431E]/30 hover:shadow-2xl hover:shadow-[#FF431E]/10 transition-all duration-500">
+                <div
+                    class="h-40 flex items-center justify-center mb-8 bg-white rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-all">
+                    {% if sponsor.logo %}
+                    <img src="{{ sponsor.logo.url }}" alt="{{ sponsor.name }}"
+                        class="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500">
+                    {% else %}
+                    <div class="text-slate-300 font-black text-4xl uppercase">{{ sponsor.name|slice:":2" }}</div>
+                    {% endif %}
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#FF431E] transition-colors">{{
+                    sponsor.name }}</h3>
+                <div class="text-slate-600 leading-relaxed mb-6 line-clamp-4 prose prose-slate text-sm">
+                    {{ sponsor.description|safe }}
+                </div>
+                {% if sponsor.website_url %}
+                <a href="{{ sponsor.website_url }}" target="_blank"
+                    class="inline-flex items-center gap-2 text-[#FF431E] font-bold hover:gap-3 transition-all">
+                    Visit Website <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-12 text-slate-500 italic">
+                Sponsor information is being updated.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Mission Quote Partition -->
+<section class="py-20 bg-slate-900 border-y border-white/5">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <i data-lucide="heart" class="w-12 h-12 text-[#FF431E] mx-auto mb-8 animate-bounce"></i>
+            <h2 class="text-3xl font-medium text-white italic leading-relaxed">
+                "Thanks to the generous support of our sponsors, AccessAdvisr can continue delivering trusted
+                accessibility reviews and resources for the benefit of the community."
+            </h2>
+        </div>
+    </div>
+</section>
+
+<!-- Partners & Friends Section -->
+<section class="py-24 bg-slate-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-slate-900 mb-6">Partners & Friends of AccessAdvisr</h2>
+            <p class="text-slate-600 max-w-3xl mx-auto text-lg leading-relaxed">
+                Valued accessibility partners and organisations that share our mission to make the world more inclusive
+                and accessible for everyone.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for partner in partners %}
+            <div
+                class="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-[#FF431E]/20 transition-all hover:shadow-xl hover:-translate-y-1 relative">
+                <div
+                    class="h-24 flex items-center justify-center mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
+                    {% if partner.logo %}
+                    <img src="{{ partner.logo.url }}" alt="{{ partner.name }}"
+                        class="max-h-full max-w-full object-contain">
+                    {% else %}
+                    <i data-lucide="handshake"
+                        class="w-10 h-10 text-slate-300 group-hover:text-[#FF431E] transition-colors"></i>
+                    {% endif %}
+                </div>
+                <h4 class="text-center font-bold text-slate-800 group-hover:text-[#FF431E] transition-colors">{{
+                    partner.name }}</h4>
+                {% if partner.website_url %}
+                <a href="{{ partner.website_url }}" target="_blank" class="absolute inset-0 z-10"
+                    aria-label="Visit {{ partner.name }}"></a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="col-span-4 text-center py-12 text-slate-500 italic">
+                Our list of friends is growing!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-24 bg-white overflow-hidden relative border-t border-slate-100">
+    <div class="container mx-auto px-4">
+        <div
+            class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-[#FF431E]/10 rounded-full blur-[100px]"></div>
+
+            <h2 class="text-4xl md:text-5xl font-black text-white mb-8">Become a Partner</h2>
+            <p class="text-xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Join our network of inclusive organisations and help us build a world with equal accessibility for all.
+            </p>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a href="mailto:contactus@accessadvisr.net"
+                    class="px-10 py-5 bg-[#FF431E] text-white rounded-full font-black hover:bg-[#e53a19] transition-all transform hover:scale-110 shadow-xl shadow-[#FF431E]/30">
+                    Contact Us Today
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - AccessAdvisr{% endblock %}
+
+{% block content %}
+<article class="bg-white min-h-screen">
+    <!-- Header/Hero -->
+    <header class="relative py-24 md:py-32 overflow-hidden bg-[#1A1A1A] text-white">
+        <!-- Floating Elements -->
+        <div class="absolute inset-0 opacity-20 overflow-hidden pointer-events-none">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#FF431E] rounded-full blur-[150px]"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#FF8C00] rounded-full blur-[150px]"></div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10 max-w-4xl text-center">
+            <div class="flex items-center justify-center gap-2 mb-8 animate-fade-in">
+                <span class="px-4 py-1.5 bg-[#FF431E] rounded-full text-[10px] font-black uppercase tracking-widest">
+                    {{ post.category.name }}
+                </span>
+                <span class="text-slate-500">•</span>
+                <span class="text-slate-400 text-xs font-bold">{{ post.created_at|date:"F d, Y" }}</span>
+            </div>
+
+            <h1 class="text-4xl md:text-6xl font-black mb-10 tracking-tighter leading-tight animate-slide-up">
+                {{ post.title }}
+            </h1>
+
+            <div class="flex items-center justify-center gap-4 animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
+                    <img src="https://ui-avatars.com/api/?name={% if post.author %}{{ post.author.username }}{% else %}AccessAdvisr{% endif %}&background=FF431E&color=fff"
+                        alt="Author" class="w-full h-full object-cover">
+                </div>
+                <div class="text-left">
+                    <p class="text-xs font-black uppercase tracking-widest text-[#FF431E] mb-0.5">Written by</p>
+                    <p class="text-base font-bold text-white">{% if post.author %}{{
+                        post.author.get_full_name|default:post.author.username }}{% else %}AccessAdvisr Team{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <section class="relative -mt-16 pb-24">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="flex flex-col lg:flex-row gap-12">
+
+                <!-- Article Content -->
+                <div class="w-full lg:w-2/3">
+                    <div
+                        class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-6 md:p-12 lg:p-16 border border-slate-100">
+
+                        {% if post.featured_image %}
+                        <div class="rounded-[2.5rem] overflow-hidden mb-12 shadow-xl shadow-slate-200/30">
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-auto">
+                        </div>
+                        {% endif %}
+
+                        <div
+                            class="prose prose-slate prose-lg max-w-none 
+                            prose-headings:font-black prose-headings:tracking-tighter 
+                            prose-p:text-slate-600 prose-p:leading-relaxed 
+                            prose-strong:text-slate-900 prose-strong:font-bold
+                            prose-a:text-[#FF431E] prose-a:no-underline hover:prose-a:underline
+                            prose-img:rounded-3xl prose-img:shadow-lg
+                            prose-blockquote:border-l-4 prose-blockquote:border-[#FF431E] prose-blockquote:bg-slate-50 prose-blockquote:p-8 prose-blockquote:rounded-r-3xl prose-blockquote:italic prose-blockquote:text-xl prose-blockquote:text-slate-800">
+
+                            {{ post.content|safe }}
+
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div
+                            class="mt-16 pt-8 border-t border-slate-100 flex flex-wrap items-center justify-between gap-6 font-bold text-sm">
+                            <div class="flex items-center gap-4 text-slate-400">
+                                <span>Share this story:</span>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all hover:bg-[#FF431E] hover:text-white">
+                                        <i data-lucide="twitter" class="w-4 h-4"></i>
+                                    </button>
+                                    <button
+                                        class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all hover:bg-[#1877F2] hover:text-white">
+                                        <i data-lucide="facebook" class="w-4 h-4"></i>
+                                    </button>
+                                    <button
+                                        class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all hover:bg-[#0077b5] hover:text-white">
+                                        <i data-lucide="linkedin" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <a href="{% url 'blog_list' %}"
+                                class="flex items-center gap-2 text-[#FF431E] hover:underline">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                                Back to all Articles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Sidebar -->
+                <aside class="w-full lg:w-1/3">
+                    <div class="sticky top-28 space-y-10">
+
+                        <!-- Recent Posts -->
+                        <div class="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100">
+                            <h3 class="text-xl font-black mb-6 tracking-tight">Community Stories</h3>
+                            <div class="space-y-6">
+                                {% for recent in recent_posts %}
+                                <a href="{% url 'blog_detail' recent.slug %}" class="flex gap-4 group">
+                                    <div class="shrink-0 w-20 h-20 rounded-2xl overflow-hidden">
+                                        {% if recent.featured_image %}
+                                        <img src="{{ recent.featured_image.url }}" alt="{{ recent.title }}"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                        {% else %}
+                                        <div class="w-full h-full bg-slate-200"></div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="text-sm font-bold group-hover:text-[#FF431E] transition-colors line-clamp-2 leading-tight mb-2">
+                                            {{ recent.title }}
+                                        </h4>
+                                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            {{ recent.created_at|date:"M d, Y" }}
+                                        </span>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Categories -->
+                        <div class="bg-white border-2 border-slate-50 rounded-[2.5rem] p-8">
+                            <h3 class="text-xl font-black mb-6 tracking-tight">Explore More</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {% for cat in categories %}
+                                <a href="{% url 'blog_list' %}?category={{ cat.slug }}"
+                                    class="px-5 py-2 rounded-full bg-slate-50 text-slate-600 text-xs font-bold border border-slate-100 hover:border-[#FF431E] hover:text-[#FF431E] transition-all">
+                                    {{ cat.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <div class="bg-gradient-to-br from-[#FF431E] to-[#FF8C00] rounded-[2.5rem] p-8 text-white">
+                            <h3 class="text-2xl font-black mb-4 tracking-tight leading-tight">Got an accessible story?
+                            </h3>
+                            <p class="text-white/80 text-sm mb-8 font-medium">We're always looking for new contributors
+                                to share their travel experiences.</p>
+                            <a href="{% url 'contact' %}"
+                                class="inline-flex items-center justify-center w-full px-6 py-4 bg-white text-slate-900 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                Tell your story
+                            </a>
+                        </div>
+
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+</article>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.8s ease-out forwards;
+    }
+
+    .animate-slide-up {
+        animation: slide-up 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}

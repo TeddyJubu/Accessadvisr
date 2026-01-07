@@ -1,0 +1,54 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Your venue submission is under review{% endblock %}
+
+{% block content %}
+<h2>Thank you for your submission! 📍</h2>
+
+<p>Hi there,</p>
+
+<p>
+    Thank you for submitting <strong>{{ listing.name }}</strong> to AccessAdvisr!
+    Your contribution helps expand our directory of accessible venues.
+</p>
+
+<div class="highlight-box">
+    <strong>{{ listing.name }}</strong><br>
+    {% if listing.subtitle %}{{ listing.subtitle }}<br>{% endif %}
+    📍 {{ listing.city }}, {{ listing.country }}<br>
+    {% if listing.address %}🏠 {{ listing.address }}{% endif %}
+</div>
+
+<p>
+    <strong>What happens next?</strong><br>
+    Our team will review your submission to verify the information and ensure
+    it meets our quality standards. This typically takes 1-2 business days.
+</p>
+
+<p>
+    Once approved, your venue will be:
+</p>
+
+<ul style="padding-left: 20px;">
+    <li>✅ Added to our interactive map</li>
+    <li>✅ Searchable by other users</li>
+    <li>✅ Ready to receive accessibility reviews</li>
+</ul>
+
+<p>
+    We'll send you an email when your venue goes live!
+</p>
+
+<p style="text-align: center;">
+    <a href="{{ site_url }}/listings/" class="btn">Explore More Venues</a>
+</p>
+
+<p>
+    Thank you for helping make the world more accessible.
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>The AccessAdvisr Team</strong>
+</p>
+{% endblock %}

@@ -1,31 +1,221 @@
 <!-- templates/core/partials/search_bar.html -->
 <div class="container mx-auto px-4 relative -mt-10 z-20 mb-20">
-    <div
-        class="bg-white p-6 rounded shadow-xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center border border-gray-100">
-        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
-            <i data-lucide="edit-3" class="w-5 h-5 text-gray-400"></i>
-            <input type="text" placeholder="Keywords..." class="w-full outline-none text-slate-600 placeholder-gray-400"
-                aria-label="Keywords">
+    <form id="search-form" action="{% url 'listings_list' %}" method="get">
+        <div class="bg-white p-6 rounded-lg shadow-xl border border-gray-100">
+            <!-- Main Search Row -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <div
+                    class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                    <input type="text" name="q" id="search-keywords" placeholder="Keywords..."
+                        class="w-full outline-none text-slate-600 placeholder-gray-400" aria-label="Search by keywords"
+                        value="{{ query|default:'' }}">
+                </div>
+                <div
+                    class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                    <select name="category" id="search-category"
+                        class="w-full outline-none text-slate-600 bg-transparent cursor-pointer"
+                        aria-label="Filter by category">
+                        <option value="">All Categories</option>
+                        <option value="Accommodation" {% if selected_category == 'Accommodation' %}selected{% endif %}>
+                            Accommodation</option>
+                        <option value="Food & Drink" {% if selected_category == 'Food & Drink' %}selected{% endif %}>Food
+                            & Drink</option>
+                        <option value="Entertainment" {% if selected_category == 'Entertainment' %}selected{% endif %}>
+                            Entertainment</option>
+                        <option value="Museums & Culture" {% if selected_category == 'Museums & Culture' %}selected{% endif %}>
+                            Museums & Culture</option>
+                        <option value="Sport & Recreation" {% if selected_category == 'Sport & Recreation' %}selected{% endif %}>
+                            Sport & Recreation</option>
+                        <option value="Transport" {% if selected_category == 'Transport' %}selected{% endif %}>
+                            Transport</option>
+                        <option value="Shopping" {% if selected_category == 'Shopping' %}selected{% endif %}>
+                            Shopping</option>
+                    </select>
+                </div>
+                <div
+                    class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
+                    <i data-lucide="map-pin" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                    <input type="text" name="location" id="search-location" placeholder="Location"
+                        class="w-full outline-none text-slate-600 placeholder-gray-400" aria-label="Filter by location"
+                        value="{{ selected_location|default:'' }}">
+                </div>
+                <div>
+                    <button type="submit"
+                        class="w-full bg-[#FF431E] hover:bg-[#e03615] text-white py-3 px-6 rounded font-bold transition-colors shadow-lg shadow-orange-200">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Accessibility Filters Toggle -->
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <button type="button" id="toggle-accessibility-filters"
+                    class="flex items-center gap-2 text-sm text-slate-600 hover:text-[#FF431E] transition-colors">
+                    <i data-lucide="accessibility" class="w-4 h-4"></i>
+                    <span>Filter by Accessibility Features</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="filter-chevron"></i>
+                </button>
+
+                <!-- Accessibility Feature Toggles (hidden by default) -->
+                <div id="accessibility-filters" class="hidden mt-4">
+                    <p class="text-xs text-slate-400 mb-3">Select accessibility features to filter venues:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <!-- Wheelchair Access -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="wheelchair" class="sr-only peer" {% if 'wheelchair' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="accessibility" class="w-4 h-4"></i>
+                                Wheelchair Access
+                            </span>
+                        </label>
+
+                        <!-- Accessible Restroom -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="accessible_restroom" class="sr-only peer" {% if 'accessible_restroom' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="square-user" class="w-4 h-4"></i>
+                                Accessible Restroom
+                            </span>
+                        </label>
+
+                        <!-- Hearing Loop -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="hearing_loop" class="sr-only peer" {% if 'hearing_loop' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="ear" class="w-4 h-4"></i>
+                                Hearing Loop
+                            </span>
+                        </label>
+
+                        <!-- Braille/Tactile -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="braille" class="sr-only peer" {% if 'braille' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="braille" class="w-4 h-4"></i>
+                                Braille/Tactile
+                            </span>
+                        </label>
+
+                        <!-- Accessible Parking -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="accessible_parking" class="sr-only peer" {% if 'accessible_parking' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="car" class="w-4 h-4"></i>
+                                Accessible Parking
+                            </span>
+                        </label>
+
+                        <!-- Guide Dogs Welcome -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="guide_dogs" class="sr-only peer" {% if 'guide_dogs' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="dog" class="w-4 h-4"></i>
+                                Guide Dogs
+                            </span>
+                        </label>
+
+                        <!-- Step-Free Access -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="step_free" class="sr-only peer" {% if 'step_free' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="move-horizontal" class="w-4 h-4"></i>
+                                Step-Free
+                            </span>
+                        </label>
+
+                        <!-- Sensory Friendly -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="sensory_friendly" class="sr-only peer" {% if 'sensory_friendly' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="sun-dim" class="w-4 h-4"></i>
+                                Sensory Friendly
+                            </span>
+                        </label>
+
+                        <!-- Staff Trained -->
+                        <label class="accessibility-filter-btn group cursor-pointer">
+                            <input type="checkbox" name="features" value="staff_trained" class="sr-only peer" {% if 'staff_trained' in selected_features %}checked{% endif %}>
+                            <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
+                                border border-gray-200 bg-gray-50 text-slate-600
+                                peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
+                                hover:border-[#FF431E] transition-all">
+                                <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                                Trained Staff
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Clear Filters -->
+                    <div class="mt-3 flex gap-2">
+                        <button type="button" id="clear-accessibility-filters"
+                            class="text-xs text-slate-400 hover:text-[#FF431E] transition-colors">
+                            Clear accessibility filters
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
-            <i data-lucide="layers" class="w-5 h-5 text-gray-400"></i>
-            <select class="w-full outline-none text-slate-600 bg-transparent cursor-pointer"
-                aria-label="Filter by category">
-                <option>Filter by category</option>
-                <option>Accommodation</option>
-                <option>Food &amp; Drink</option>
-            </select>
-        </div>
-        <div class="flex items-center gap-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 px-2">
-            <i data-lucide="map-pin" class="w-5 h-5 text-gray-400"></i>
-            <input type="text" placeholder="Location" class="w-full outline-none text-slate-600 placeholder-gray-400"
-                aria-label="Location">
-        </div>
-        <div>
-            <button
-                class="w-full bg-[#FF431E] hover:bg-[#e03615] text-white py-3 px-6 rounded font-bold transition-colors shadow-lg shadow-orange-200">
-                Search
-            </button>
-        </div>
-    </div>
+    </form>
 </div>
+
+<script>
+    // Toggle accessibility filters panel
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggle-accessibility-filters');
+        const filtersPanel = document.getElementById('accessibility-filters');
+        const chevron = document.getElementById('filter-chevron');
+        const clearBtn = document.getElementById('clear-accessibility-filters');
+
+        if (toggleBtn && filtersPanel) {
+            // Check if any filters are already selected (from URL params)
+            const checkboxes = filtersPanel.querySelectorAll('input[type="checkbox"]');
+            const hasSelected = Array.from(checkboxes).some(cb => cb.checked);
+
+            // Auto-expand if filters are selected
+            if (hasSelected) {
+                filtersPanel.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            }
+
+            toggleBtn.addEventListener('click', function () {
+                filtersPanel.classList.toggle('hidden');
+                const isOpen = !filtersPanel.classList.contains('hidden');
+                chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        }
+
+        // Clear all accessibility filters
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                const checkboxes = filtersPanel.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+            });
+        }
+    });
+</script>

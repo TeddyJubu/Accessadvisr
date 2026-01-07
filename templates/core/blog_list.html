@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - AccessAdvisr{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-[#1A1A1A] text-white py-24 relative overflow-hidden">
+    <div class="absolute inset-0 z-0 opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#FF431E]/20 to-transparent"></div>
+        <div
+            class="absolute top-1/2 left-0 w-96 h-96 bg-[#FF431E] rounded-full blur-[150px] -translate-y-1/2 -translate-x-1/2">
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10 text-center">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
+            THE <span
+                class="bg-gradient-to-r from-[#FF431E] to-[#FF8C00] bg-clip-text text-transparent italic">ADVISR</span>
+            BLOG
+        </h1>
+        <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-medium">
+            Discover accessible destinations, travel tips, and stories from our community.
+        </p>
+    </div>
+</section>
+
+<!-- Main Feed -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-12">
+
+            <!-- Sidebar (Categories) -->
+            <aside class="w-full lg:w-1/4">
+                <div class="sticky top-28 space-y-8">
+                    <div>
+                        <h3
+                            class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-100 pb-2">
+                            Categories
+                        </h3>
+                        <div class="flex flex-wrap lg:flex-col gap-2">
+                            <a href="?category="
+                                class="px-4 py-2 rounded-full text-sm font-bold transition-all {% if not selected_category %}bg-[#FF431E] text-white shadow-lg shadow-[#FF431E]/30{% else %}bg-slate-50 text-slate-600 hover:bg-slate-100{% endif %}">
+                                All Articles
+                            </a>
+                            {% for category in categories %}
+                            <a href="?category={{ category.slug }}"
+                                class="px-4 py-2 rounded-full text-sm font-bold transition-all {% if selected_category == category.slug %}bg-[#FF431E] text-white shadow-lg shadow-[#FF431E]/30{% else %}bg-slate-50 text-slate-600 hover:bg-slate-100{% endif %}">
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Sign Up Mockup -->
+                    <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100">
+                        <h4 class="text-xl font-bold mb-3">Newsletter</h4>
+                        <p class="text-slate-500 text-sm mb-6">Get the latest accessible travel guides delivered to your
+                            inbox.</p>
+                        <form class="space-y-3">
+                            <input type="email" placeholder="Your email address"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#FF431E] focus:ring-1 focus:ring-[#FF431E] outline-none transition-all text-sm">
+                            <button
+                                class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-black transition-colors">
+                                Subscribe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Blog Posts Grid -->
+            <div class="w-full lg:w-3/4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {% for post in page_obj %}
+                    <article class="group">
+                        <a href="{% url 'blog_detail' post.slug %}"
+                            class="block overflow-hidden rounded-[2.5rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-2xl hover:shadow-[#FF431E]/5 hover:-translate-y-1">
+                            <div class="relative h-64 overflow-hidden">
+                                {% if post.featured_image %}
+                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                {% else %}
+                                <div
+                                    class="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                                    <i data-lucide="image" class="w-12 h-12 text-slate-400"></i>
+                                </div>
+                                {% endif %}
+                                <div class="absolute top-4 left-4">
+                                    <span
+                                        class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-[#FF431E]">
+                                        {{ post.category.name }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-8">
+                                <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-4">
+                                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                                    <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                    <span>{% if post.author %}{{ post.author.get_full_name|default:post.author.username
+                                        }}{% else %}AccessAdvisr Team{% endif %}</span>
+                                </div>
+                                <h2
+                                    class="text-2xl font-bold mb-4 leading-tight group-hover:text-[#FF431E] transition-colors">
+                                    {{ post.title }}
+                                </h2>
+                                <p class="text-slate-500 text-sm line-clamp-3 mb-6">
+                                    {{ post.excerpt|default:post.content|striptags|truncatewords:30 }}
+                                </p>
+                                <div class="flex items-center text-[#FF431E] font-bold text-sm">
+                                    Read Selection <i data-lucide="arrow-right"
+                                        class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                    {% empty %}
+                    <div class="col-span-full py-20 text-center">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="search-x" class="w-10 h-10 text-slate-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">No articles found</h3>
+                        <p class="text-slate-500">Try a different category or check back later.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                <div class="mt-16 flex justify-center gap-2">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                        class="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100 transition-all">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span
+                        class="w-12 h-12 flex items-center justify-center rounded-xl bg-[#FF431E] text-white font-bold shadow-lg shadow-[#FF431E]/30 border border-[#FF431E]">
+                        {{ num }}
+                    </span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+                        href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                        class="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100 transition-all font-bold">
+                        {{ num }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100 transition-all">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </a>
+                        {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

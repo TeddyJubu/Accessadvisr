@@ -212,10 +212,47 @@
         }
 
         function submitSearch() {
-            const q = document.querySelector('[aria-label="Keywords"]')?.value || '';
-            const category = document.querySelector('[aria-label="Filter by category"]')?.value || '';
-            const location = document.querySelector('[aria-label="Location"]')?.value || '';
-            loadListings({ q, category, location });
+            const q = document.querySelector('[aria-label=\"Search by keywords\"]')?.value ||
+                document.querySelector('[aria-label=\"Keywords\"]')?.value || '';
+            const category = document.querySelector('[aria-label=\"Filter by category\"]')?.value || '';
+            const location = document.querySelector('[aria-label=\"Filter by location\"]')?.value ||
+                document.querySelector('[aria-label=\"Location\"]')?.value || '';
+
+            // Collect accessibility feature filters
+            const featureCheckboxes = document.querySelectorAll('input[name="features"]:checked');
+            const features = Array.from(featureCheckboxes).map(cb => cb.value);
+
+            // Build params object
+            const params = { q, category, location };
+
+            // Add features as multiple params
+            if (features.length > 0) {
+                loadListingsWithFeatures(q, category, location, features);
+            } else {
+                loadListings(params);
+            }
+        }
+
+        async function loadListingsWithFeatures(q, category, location, features) {
+            try {
+                const url = new URL(apiUrl, window.location.origin);
+                if (q) url.searchParams.set('q', q);
+                if (category) url.searchParams.set('category', category);
+                if (location) url.searchParams.set('location', location);
+                features.forEach(f => url.searchParams.append('features', f));
+
+                const res = await fetch(url.toString());
+                const json = await res.json();
+                renderMarkers(json.listings);
+
+                // Update count display if exists
+                const countDisplay = document.getElementById('results-count');
+                if (countDisplay) {
+                    countDisplay.textContent = `${json.count} venues found`;
+                }
+            } catch (error) {
+                console.error('Error loading listings:', error);
+            }
         }
 
         function initializeMapWhenReady() {

@@ -1,0 +1,53 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Welcome to AccessAdvisr!{% endblock %}
+
+{% block content %}
+<h2>Welcome to AccessAdvisr! 👋</h2>
+
+<p>Hi {{ user.username }},</p>
+
+<p>
+    Welcome to AccessAdvisr — the community-powered accessibility directory
+    helping disabled travelers discover, evaluate, and share real-world access
+    information about venues worldwide.
+</p>
+
+<p><strong>Here's what you can do:</strong></p>
+
+<ul style="padding-left: 20px;">
+    <li>🗺️ <strong>Explore</strong> — Browse 49+ accessible venues in London</li>
+    <li>⭐ <strong>Review</strong> — Share your accessibility experiences</li>
+    <li>➕ <strong>Contribute</strong> — Suggest new accessible venues</li>
+    <li>♿ <strong>Filter</strong> — Find venues by specific accessibility features</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="{{ site_url }}/listings/" class="btn">Start Exploring</a>
+</p>
+
+<p>
+    <strong>Your first steps:</strong>
+</p>
+
+<ol style="padding-left: 20px;">
+    <li>Browse the interactive map to find accessible venues near you</li>
+    <li>Use the accessibility filters to find venues that meet your needs</li>
+    <li>Share a review of a place you've visited</li>
+</ol>
+
+<p>
+    Every review you write helps others in the disabled community make
+    confident decisions about where to go. Together, we're making the
+    world more accessible!
+</p>
+
+<p>
+    If you have any questions or suggestions, we'd love to hear from you.
+</p>
+
+<p>
+    Welcome aboard,<br>
+    <strong>The AccessAdvisr Team</strong>
+</p>
+{% endblock %}

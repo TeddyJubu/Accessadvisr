@@ -1,0 +1,50 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Thank you for your review!{% endblock %}
+
+{% block content %}
+<h2>Thank you for your review! 🙏</h2>
+
+<p>Hi {{ review.author_name }},</p>
+
+<p>
+    Thank you for taking the time to share your accessibility experience at
+    <strong>{{ listing.name }}</strong>. Your review helps others in the
+    disabled community make informed decisions about places to visit.
+</p>
+
+<div class="highlight-box">
+    <strong>{{ listing.name }}</strong><br>
+    📍 {{ listing.city }}, {{ listing.country }}<br>
+    <span class="rating">★ Your rating: {{ review.rating }}/5</span>
+</div>
+
+{% if review.comment %}
+<p><em>"{{ review.comment|truncatewords:50 }}"</em></p>
+{% endif %}
+
+<p>
+    <strong>What happens next?</strong><br>
+    Your review is now in our moderation queue. Our team will review it shortly
+    to ensure it meets our community guidelines. Once approved, it will be
+    visible on the venue's page.
+</p>
+
+<p>
+    We'll send you another email when your review goes live!
+</p>
+
+<p style="text-align: center;">
+    <a href="{{ site_url }}/listings/" class="btn">Explore More Venues</a>
+</p>
+
+<p>
+    Thank you for being part of the AccessAdvisr community and helping make
+    the world more accessible for everyone.
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>The AccessAdvisr Team</strong>
+</p>
+{% endblock %}

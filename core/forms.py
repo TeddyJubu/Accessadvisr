@@ -1,6 +1,8 @@
 # core/forms.py
 from django import forms
-from .models import Review, Listing, Category
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from .models import Review, Listing, Category, ListingPhoto, ContactMessage
 
 
 class ReviewForm(forms.ModelForm):
@@ -196,3 +198,118 @@ class ListingSubmissionForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class ListingPhotoForm(forms.ModelForm):
+    """Form for uploading a single photo to a listing"""
+    
+    class Meta:
+        model = ListingPhoto
+        fields = ['image', 'caption', 'alt_text', 'is_primary']
+        widgets = {
+            'image': forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/jpeg,image/png,image/webp,image/gif',
+                'id': 'photo-upload-input',
+            }),
+            'caption': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none',
+                'placeholder': 'Photo caption (optional)',
+            }),
+            'alt_text': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none',
+                'placeholder': 'Description for screen readers',
+            }),
+            'is_primary': forms.CheckboxInput(attrs={
+                'class': 'w-5 h-5 rounded border-slate-300 text-[#FF431E] focus:ring-[#FF431E]',
+            }),
+        }
+        labels = {
+            'image': 'Photo',
+            'caption': 'Caption',
+            'alt_text': 'Alt Text (for accessibility)',
+            'is_primary': 'Set as primary photo',
+        }
+    
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            # Check file size
+            if hasattr(settings, 'MAX_UPLOAD_SIZE') and image.size > settings.MAX_UPLOAD_SIZE:
+                max_mb = settings.MAX_UPLOAD_SIZE / (1024 * 1024)
+                raise ValidationError(f'Image file is too large. Maximum size is {max_mb:.0f}MB.')
+            
+            # Check file type
+            if hasattr(settings, 'ALLOWED_IMAGE_TYPES'):
+                content_type = image.content_type
+                if content_type not in settings.ALLOWED_IMAGE_TYPES:
+                    raise ValidationError('Unsupported image format. Please use JPEG, PNG, WebP, or GIF.')
+        
+        return image
+
+
+class MultipleFileInput(forms.FileInput):
+    """Custom widget that allows multiple file uploads"""
+    allow_multiple_selected = True
+
+
+class MultiplePhotoUploadForm(forms.Form):
+    """Form for uploading multiple photos at once"""
+    
+    photos = forms.FileField(
+        widget=MultipleFileInput(attrs={
+            'class': 'hidden',
+            'accept': 'image/jpeg,image/png,image/webp,image/gif',
+            'id': 'multi-photo-upload-input',
+        }),
+        label='Upload Photos',
+        required=False,
+    )
+    
+    def clean_photos(self):
+        photos = self.files.getlist('photos')
+        max_photos = 10  # Maximum photos per upload
+        
+        if len(photos) > max_photos:
+            raise ValidationError(f'You can upload a maximum of {max_photos} photos at once.')
+        
+        for photo in photos:
+            # Check file size
+            if hasattr(settings, 'MAX_UPLOAD_SIZE') and photo.size > settings.MAX_UPLOAD_SIZE:
+                max_mb = settings.MAX_UPLOAD_SIZE / (1024 * 1024)
+                raise ValidationError(f'{photo.name} is too large. Maximum size is {max_mb:.0f}MB.')
+            
+            # Check file type
+            if hasattr(settings, 'ALLOWED_IMAGE_TYPES'):
+                content_type = photo.content_type
+                if content_type not in settings.ALLOWED_IMAGE_TYPES:
+                    raise ValidationError(f'{photo.name} has an unsupported format. Use JPEG, PNG, WebP, or GIF.')
+        
+        return photos
+
+
+class ContactForm(forms.ModelForm):
+    """Form for site inquiries"""
+    
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'subject', 'message']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'Your full name',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'Your email address',
+            }),
+            'subject': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'What is this about?',
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none resize-none transition-all',
+                'placeholder': 'How can we help you today?',
+                'rows': 5,
+            }),
+        }
