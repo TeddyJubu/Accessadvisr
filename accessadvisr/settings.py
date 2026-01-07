@@ -149,15 +149,50 @@ if (BASE_DIR / 'static').exists():
 else:
     STATICFILES_DIRS = []
 
-# WhiteNoise for static file serving in production
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-}
+# =============================================================================
+# MEDIA FILES (User Uploads)
+# =============================================================================
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# =============================================================================
+# FILE STORAGE
+# =============================================================================
+
+# Use Cloudinary for production, local filesystem for development
+USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False').lower() == 'true'
+
+if USE_CLOUDINARY and PRODUCTION:
+    # Cloudinary settings (requires cloudinary credentials in env)
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', ''),
+        'API_KEY': os.getenv('CLOUDINARY_API_KEY', ''),
+        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', ''),
+    }
+    
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+    }
+else:
+    # Local file storage for development
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+    }
+
+# Image upload settings
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB max
+ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 
 # =============================================================================
 # AUTHENTICATION
@@ -185,3 +220,27 @@ if PRODUCTION:
 # =============================================================================
 
 CORS_ALLOW_ALL_ORIGINS = True  # For API access during demo
+
+# =============================================================================
+# EMAIL CONFIGURATION
+# =============================================================================
+
+# Email backend - use console for development, SMTP for production
+if PRODUCTION:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# SMTP Configuration (for production)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.sendgrid.net')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'apikey')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'AccessAdvisr <noreply@accessadvisr.com>')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Site URL for email links
+SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
+if PRODUCTION:
+    SITE_URL = 'https://accessadvisr-932375520212.us-central1.run.app'

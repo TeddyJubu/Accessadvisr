@@ -106,6 +106,76 @@ class Listing(models.Model):
         
         return badges
 
+    def get_primary_photo(self):
+        """Get the primary photo or first uploaded photo"""
+        primary = self.listing_photos.filter(is_primary=True).first()
+        if primary:
+            return primary
+        return self.listing_photos.first()
+    
+    def get_all_photos(self):
+        """Get all photos for this listing, primary first"""
+        return self.listing_photos.all().order_by('-is_primary', '-uploaded_at')
+    
+    @property
+    def has_photos(self):
+        """Check if listing has any uploaded photos"""
+        return self.listing_photos.exists()
+
+
+def listing_photo_path(instance, filename):
+    """Generate upload path: listings/<listing_id>/<filename>"""
+    import os
+    import uuid
+    ext = filename.split('.')[-1].lower()
+    new_filename = f"{uuid.uuid4().hex[:12]}.{ext}"
+    return f"listings/{instance.listing.id}/{new_filename}"
+
+
+class ListingPhoto(models.Model):
+    """Photo uploaded for a listing"""
+    listing = models.ForeignKey(
+        Listing, 
+        on_delete=models.CASCADE, 
+        related_name='listing_photos'
+    )
+    image = models.ImageField(upload_to=listing_photo_path)
+    caption = models.CharField(max_length=200, blank=True)
+    alt_text = models.CharField(
+        max_length=200, 
+        blank=True,
+        help_text="Description for screen readers"
+    )
+    is_primary = models.BooleanField(
+        default=False,
+        help_text="Primary photo shown in listings and map"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-is_primary', '-uploaded_at']
+        verbose_name = "Listing Photo"
+        verbose_name_plural = "Listing Photos"
+    
+    def __str__(self):
+        return f"Photo for {self.listing.name}"
+    
+    def save(self, *args, **kwargs):
+        # If this is marked as primary, unset other primaries for this listing
+        if self.is_primary:
+            ListingPhoto.objects.filter(
+                listing=self.listing, 
+                is_primary=True
+            ).exclude(pk=self.pk).update(is_primary=False)
+        super().save(*args, **kwargs)
+    
+    @property
+    def url(self):
+        """Get the URL for the image"""
+        if self.image:
+            return self.image.url
+        return None
+
 
 class Review(models.Model):
     """User review with accessibility-focused fields"""

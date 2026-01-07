@@ -1,6 +1,6 @@
 # core/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
@@ -9,9 +9,15 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Listing, Review, Category
-from .forms import ReviewForm, ListingSubmissionForm
+from .models import Listing, Review, Category, ListingPhoto
+from .forms import ReviewForm, ListingSubmissionForm, ListingPhotoForm
 from .utils import geocode_listing
+from .emails import (
+    send_review_submitted_email,
+    send_review_approved_email,
+    send_welcome_email,
+    send_listing_approved_email,
+)
 
 
 def home(request):
@@ -33,6 +39,7 @@ def listings_list(request):
     category = request.GET.get("category", "").strip()
     location = request.GET.get("location", "").strip()
     status = request.GET.get("status", "").strip()
+    features = request.GET.getlist("features")  # Multiple accessibility features
     
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(subtitle__icontains=q) | Q(description__icontains=q))
@@ -42,6 +49,11 @@ def listings_list(request):
         qs = qs.filter(Q(city__icontains=location) | Q(country__icontains=location))
     if status and status != "all":
         qs = qs.filter(status=status)
+    
+    # Filter by accessibility features (AND logic - must have ALL selected features)
+    for feature in features:
+        if feature:
+            qs = qs.filter(accessibility_features__icontains=feature)
     
     # Pagination
     paginator = Paginator(qs, 12)
@@ -58,6 +70,7 @@ def listings_list(request):
         "selected_category": category,
         "selected_location": location,
         "selected_status": status,
+        "selected_features": features,
     })
 
 
@@ -66,6 +79,7 @@ def listing_detail(request, pk):
     listing = get_object_or_404(Listing, pk=pk, moderation_status="approved")
     reviews = listing.reviews.filter(moderation_status="approved")
     badges = listing.get_accessibility_badges()
+    photos = listing.get_all_photos()
     
     # Initialize review form
     review_form = ReviewForm()
@@ -74,6 +88,7 @@ def listing_detail(request, pk):
         "listing": listing,
         "reviews": reviews,
         "badges": badges,
+        "photos": photos,
         "review_form": review_form,
     })
 
@@ -89,6 +104,10 @@ def submit_review(request, pk):
         review.listing = listing
         review.moderation_status = "pending"  # Goes to moderation queue
         review.save()
+        
+        # Send confirmation email if user provided email
+        send_review_submitted_email(review)
+        
         messages.success(request, "Thank you for your review! It will be visible after moderation.")
         return redirect("review_success", pk=pk)
     
@@ -206,6 +225,14 @@ def admin_moderate(request):
             item.moderation_status = "approved"
             item.save()
             
+            # Send approval notification emails
+            if item_type == "review":
+                send_review_approved_email(item)
+            elif item_type == "listing":
+                # For listings, we don't have submitter email stored yet
+                # This can be enhanced when we add user-owned listings
+                pass
+            
             # Auto-geocode listings when approved (if missing coordinates)
             if item_type == "listing" and (item.lat is None or item.lng is None):
                 if geocode_listing(item):
@@ -232,18 +259,24 @@ def listings_api(request):
     category = request.GET.get("category", "").strip()
     location = request.GET.get("location", "").strip()
     status = request.GET.get("status", "").strip()
+    features = request.GET.getlist("features")  # Multiple accessibility features
     
     # Only return approved listings
     qs = Listing.objects.filter(moderation_status="approved")
     
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(subtitle__icontains=q) | Q(description__icontains=q))
-    if category and category not in ("Filter by category", "all"):
+    if category and category not in ("Filter by category", "all", ""):
         qs = qs.filter(categories__icontains=category)
     if location:
         qs = qs.filter(Q(city__icontains=location) | Q(country__icontains=location))
     if status and status != "all":
         qs = qs.filter(status=status)
+    
+    # Filter by accessibility features (AND logic - must have ALL selected features)
+    for feature in features:
+        if feature:
+            qs = qs.filter(accessibility_features__icontains=feature)
     
     data = [{
         "id": l.id,
@@ -266,7 +299,7 @@ def listings_api(request):
         "accessibilityFeatures": l.accessibility_features,
     } for l in qs if l.lat is not None and l.lng is not None]
     
-    return JsonResponse({"listings": data, "count": len(data)})
+    return JsonResponse({"listings": data, "count": len(data), "filters": {"features": features}})
 
 
 def register(request):
@@ -279,6 +312,10 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            
+            # Send welcome email
+            send_welcome_email(user)
+            
             messages.success(request, f"Welcome to AccessAdvisr, {user.username}!")
             return redirect('home')
     else:
@@ -295,3 +332,75 @@ def profile(request):
     return render(request, 'registration/profile.html', {
         'user_reviews': user_reviews,
     })
+
+
+# =============================================================================
+# PHOTO MANAGEMENT VIEWS
+# =============================================================================
+
+@require_POST
+def upload_photos(request, pk):
+    """Handle photo uploads for a listing"""
+    listing = get_object_or_404(Listing, pk=pk)
+    
+    # Handle multiple file uploads
+    files = request.FILES.getlist('photos')
+    
+    if not files:
+        messages.error(request, "No photos selected.")
+        return redirect('listing_detail', pk=pk)
+    
+    uploaded_count = 0
+    for photo_file in files:
+        # Create ListingPhoto for each uploaded file
+        photo = ListingPhoto(
+            listing=listing,
+            image=photo_file,
+            caption=photo_file.name.rsplit('.', 1)[0][:100],  # Use filename as caption
+        )
+        
+        # If this is the first photo, make it primary
+        if not listing.listing_photos.exists():
+            photo.is_primary = True
+        
+        photo.save()
+        uploaded_count += 1
+    
+    if uploaded_count > 0:
+        messages.success(request, f"Successfully uploaded {uploaded_count} photo(s).")
+    
+    return redirect('listing_detail', pk=pk)
+
+
+@require_POST
+def delete_photo(request, pk, photo_id):
+    """Delete a photo from a listing"""
+    listing = get_object_or_404(Listing, pk=pk)
+    photo = get_object_or_404(ListingPhoto, pk=photo_id, listing=listing)
+    
+    was_primary = photo.is_primary
+    photo.delete()
+    
+    # If we deleted the primary photo, set the next one as primary
+    if was_primary:
+        next_photo = listing.listing_photos.first()
+        if next_photo:
+            next_photo.is_primary = True
+            next_photo.save()
+    
+    messages.success(request, "Photo deleted.")
+    return redirect('listing_detail', pk=pk)
+
+
+@require_POST
+def set_primary_photo(request, pk, photo_id):
+    """Set a photo as the primary photo for a listing"""
+    listing = get_object_or_404(Listing, pk=pk)
+    photo = get_object_or_404(ListingPhoto, pk=photo_id, listing=listing)
+    
+    # Setting is_primary will automatically unset others (via model save method)
+    photo.is_primary = True
+    photo.save()
+    
+    messages.success(request, "Primary photo updated.")
+    return redirect('listing_detail', pk=pk)

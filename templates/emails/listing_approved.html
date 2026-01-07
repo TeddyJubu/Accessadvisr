@@ -1,0 +1,50 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Your venue is now live!{% endblock %}
+
+{% block content %}
+<h2>Your venue is now live! 🎉</h2>
+
+<p>Hi there,</p>
+
+<p>
+    Great news! <strong>{{ listing.name }}</strong> has been approved and is
+    now live on AccessAdvisr.
+</p>
+
+<div class="highlight-box">
+    <strong>{{ listing.name }}</strong><br>
+    {% if listing.subtitle %}{{ listing.subtitle }}<br>{% endif %}
+    📍 {{ listing.city }}, {{ listing.country }}<br>
+    {% if listing.address %}🏠 {{ listing.address }}{% endif %}
+</div>
+
+<p>
+    Your venue is now:
+</p>
+
+<ul style="padding-left: 20px;">
+    <li>✅ Visible on our interactive map</li>
+    <li>✅ Searchable by users looking for accessible venues</li>
+    <li>✅ Ready to receive accessibility reviews from the community</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="{{ listing_url }}" class="btn">View Your Venue</a>
+</p>
+
+<p>
+    <strong>Help spread the word!</strong><br>
+    Share this venue with others who might benefit from knowing about its
+    accessibility features.
+</p>
+
+<p>
+    Thank you for contributing to a more accessible world!
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>The AccessAdvisr Team</strong>
+</p>
+{% endblock %}
