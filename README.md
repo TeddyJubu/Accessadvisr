@@ -1,4 +1,26 @@
-# AccessAdvisr - Quick Start Guide
+# AccessAdvisr 🗺️♿
+
+**An accessibility-focused directory for London venues with Google Maps integration**
+
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://accessadvisr-932375520212.us-central1.run.app/)
+[![GitHub](https://img.shields.io/badge/github-TeddyJubu%2FAccessadvisr-blue)](https://github.com/TeddyJubu/Accessadvisr)
+[![Django](https://img.shields.io/badge/Django-6.0-green)](https://www.djangoproject.com/)
+[![Google Maps](https://img.shields.io/badge/Google%20Maps-API-red)](https://developers.google.com/maps)
+
+> **Live Demo**: [https://accessadvisr-932375520212.us-central1.run.app/](https://accessadvisr-932375520212.us-central1.run.app/)
+
+AccessAdvisr is a comprehensive web application featuring **49 real accessible venues in London, UK**. Each venue includes detailed accessibility information, accurate GPS coordinates, and integration with Google Maps for seamless navigation.
+
+## 🌟 Features
+
+- 🗺️ **Interactive Google Maps** with 49 London venues
+- ♿ **Accessibility-First** design with detailed accessibility features
+- 🔍 **Smart Search & Filtering** by category, location, and keywords
+- 📱 **Responsive Design** works on all devices
+- 🏛️ **Real Venues** including museums, restaurants, hotels, attractions, parks, and more
+- 🚀 **Production Ready** deployed on Google Cloud Run
+
+---
 
 ## Google Maps Integration Setup
 
@@ -28,24 +50,16 @@ GOOGLE_MAPS_SERVER_KEY=your_actual_server_key_here
 
 **Important:** Never commit your `.env` file to Git! It's already in `.gitignore`.
 
-### Step 3: Seed Sample Data
+### Step 3: Seed London Venues
 
 ```bash
 source venv/bin/activate
-python manage.py seed_listings
+python manage.py seed_london_venues
 ```
 
-This creates 5 sample accessibility venues across different US cities.
+This creates 49 real accessible venues across London, UK (museums, restaurants, hotels, attractions, parks, theatres, and more).
 
-### Step 4: Geocode the Listings
-
-```bash
-python manage.py geocode_listings
-```
-
-This will use your Server API key to convert addresses to lat/lng coordinates.
-
-### Step 5: Start the Server
+### Step 4: Start the Server
 
 ```bash
 python manage.py runserver
@@ -53,7 +67,7 @@ python manage.py runserver
 
 Visit: http://127.0.0.1:8000/
 
-### Step 6: Test the Map
+### Step 5: Test the Map
 
 You should now see:
 - ✅ A real Google Map in the hero section
