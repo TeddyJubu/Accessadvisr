@@ -2,7 +2,7 @@
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from .models import Review, Listing, Category, ListingPhoto
+from .models import Review, Listing, Category, ListingPhoto, ContactMessage
 
 
 class ReviewForm(forms.ModelForm):
@@ -286,3 +286,30 @@ class MultiplePhotoUploadForm(forms.Form):
                     raise ValidationError(f'{photo.name} has an unsupported format. Use JPEG, PNG, WebP, or GIF.')
         
         return photos
+
+
+class ContactForm(forms.ModelForm):
+    """Form for site inquiries"""
+    
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'subject', 'message']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'Your full name',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'Your email address',
+            }),
+            'subject': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none transition-all',
+                'placeholder': 'What is this about?',
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#FF431E]/20 focus:border-[#FF431E] outline-none resize-none transition-all',
+                'placeholder': 'How can we help you today?',
+                'rows': 5,
+            }),
+        }

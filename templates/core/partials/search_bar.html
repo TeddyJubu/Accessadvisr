@@ -18,20 +18,20 @@
                         class="w-full outline-none text-slate-600 bg-transparent cursor-pointer"
                         aria-label="Filter by category">
                         <option value="">All Categories</option>
-                        <option value="Accommodation" {% if selected_category=='Accommodation' %}selected{% endif %}>
+                        <option value="Accommodation" {% if selected_category == 'Accommodation' %}selected{% endif %}>
                             Accommodation</option>
-                        <option value="Food & Drink" {% if selected_category=='Food & Drink' %}selected{% endif %}>Food
+                        <option value="Food & Drink" {% if selected_category == 'Food & Drink' %}selected{% endif %}>Food
                             & Drink</option>
-                        <option value="Entertainment" {% if selected_category=='Entertainment' %}selected{% endif %}>
+                        <option value="Entertainment" {% if selected_category == 'Entertainment' %}selected{% endif %}>
                             Entertainment</option>
-                        <option value="Museums & Culture" {% if selected_category=='Museums & Culture' %}selected{%
-                            endif %}>Museums & Culture</option>
-                        <option value="Sport & Recreation" {% if selected_category=='Sport & Recreation' %}selected{%
-                            endif %}>Sport & Recreation</option>
-                        <option value="Transport" {% if selected_category=='Transport' %}selected{% endif %}>Transport
-                        </option>
-                        <option value="Shopping" {% if selected_category=='Shopping' %}selected{% endif %}>Shopping
-                        </option>
+                        <option value="Museums & Culture" {% if selected_category == 'Museums & Culture' %}selected{% endif %}>
+                            Museums & Culture</option>
+                        <option value="Sport & Recreation" {% if selected_category == 'Sport & Recreation' %}selected{% endif %}>
+                            Sport & Recreation</option>
+                        <option value="Transport" {% if selected_category == 'Transport' %}selected{% endif %}>
+                            Transport</option>
+                        <option value="Shopping" {% if selected_category == 'Shopping' %}selected{% endif %}>
+                            Shopping</option>
                     </select>
                 </div>
                 <div
@@ -64,8 +64,7 @@
                     <div class="flex flex-wrap gap-2">
                         <!-- Wheelchair Access -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="wheelchair" class="sr-only peer" {%
-                                if 'wheelchair' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="wheelchair" class="sr-only peer" {% if 'wheelchair' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -77,8 +76,7 @@
 
                         <!-- Accessible Restroom -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="accessible_restroom" class="sr-only peer" {%
-                                if 'accessible_restroom' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="accessible_restroom" class="sr-only peer" {% if 'accessible_restroom' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -90,8 +88,7 @@
 
                         <!-- Hearing Loop -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="hearing_loop" class="sr-only peer" {%
-                                if 'hearing_loop' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="hearing_loop" class="sr-only peer" {% if 'hearing_loop' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -103,8 +100,7 @@
 
                         <!-- Braille/Tactile -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="braille" class="sr-only peer" {% if 'braille'
-                                in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="braille" class="sr-only peer" {% if 'braille' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -116,8 +112,7 @@
 
                         <!-- Accessible Parking -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="accessible_parking" class="sr-only peer" {%
-                                if 'accessible_parking' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="accessible_parking" class="sr-only peer" {% if 'accessible_parking' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -129,8 +124,7 @@
 
                         <!-- Guide Dogs Welcome -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="guide_dogs" class="sr-only peer" {%
-                                if 'guide_dogs' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="guide_dogs" class="sr-only peer" {% if 'guide_dogs' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -142,8 +136,7 @@
 
                         <!-- Step-Free Access -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="step_free" class="sr-only peer" {%
-                                if 'step_free' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="step_free" class="sr-only peer" {% if 'step_free' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -155,8 +148,7 @@
 
                         <!-- Sensory Friendly -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="sensory_friendly" class="sr-only peer" {%
-                                if 'sensory_friendly' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="sensory_friendly" class="sr-only peer" {% if 'sensory_friendly' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]
@@ -168,8 +160,7 @@
 
                         <!-- Staff Trained -->
                         <label class="accessibility-filter-btn group cursor-pointer">
-                            <input type="checkbox" name="features" value="staff_trained" class="sr-only peer" {%
-                                if 'staff_trained' in selected_features %}checked{% endif %}>
+                            <input type="checkbox" name="features" value="staff_trained" class="sr-only peer" {% if 'staff_trained' in selected_features %}checked{% endif %}>
                             <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium
                                 border border-gray-200 bg-gray-50 text-slate-600
                                 peer-checked:bg-[#FF431E] peer-checked:text-white peer-checked:border-[#FF431E]

@@ -152,7 +152,9 @@
                 {% if listing.description %}
                 <section class="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
                     <h2 class="text-xl font-bold text-[#26354E] mb-4">About</h2>
-                    <p class="text-slate-600 leading-relaxed">{{ listing.description }}</p>
+                    <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
+                        {{ listing.description|safe }}
+                    </div>
                 </section>
                 {% endif %} <!-- Accessibility Badges -->
                 {% if badges %}

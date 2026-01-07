@@ -9,8 +9,8 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Listing, Review, Category, ListingPhoto
-from .forms import ReviewForm, ListingSubmissionForm, ListingPhotoForm
+from .models import Listing, Review, Category, ListingPhoto, TeamMember, Partner, ContactMessage, BlogCategory, BlogPost, SponsorshipPackage, DonationGoal
+from .forms import ReviewForm, ListingSubmissionForm, ListingPhotoForm, ContactForm
 from .utils import geocode_listing
 from .emails import (
     send_review_submitted_email,
@@ -392,6 +392,7 @@ def delete_photo(request, pk, photo_id):
     return redirect('listing_detail', pk=pk)
 
 
+
 @require_POST
 def set_primary_photo(request, pk, photo_id):
     """Set a photo as the primary photo for a listing"""
@@ -404,3 +405,99 @@ def set_primary_photo(request, pk, photo_id):
     
     messages.success(request, "Primary photo updated.")
     return redirect('listing_detail', pk=pk)
+
+
+def about(request):
+    """About Us and Accessibility Statement page"""
+    team_members = TeamMember.objects.filter(is_active=True)
+    return render(request, "core/about.html", {"team_members": team_members})
+
+
+def partners(request):
+    """Sponsors and Partners page"""
+    sponsors = Partner.objects.filter(type="sponsor", is_active=True)
+    partners = Partner.objects.filter(type="partner", is_active=True)
+    return render(request, "core/partners.html", {
+        "sponsors": sponsors,
+        "partners": partners,
+    })
+
+
+def contact(request):
+    """View for handling the Contact Us page"""
+    from django.conf import settings
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            contact_msg = form.save()
+            
+            messages.success(request, "Your message has been sent successfully! We'll get back to you soon.")
+            
+            # Optional: send email notification
+            try:
+                from django.core.mail import send_mail
+                send_mail(
+                    subject=f"New Contact Form Submission: {contact_msg.subject}",
+                    message=f"From: {contact_msg.name} <{contact_msg.email}>\n\n{contact_msg.message}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.DEFAULT_FROM_EMAIL],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+                
+            return redirect('contact')
+    else:
+        form = ContactForm()
+    
+    context = {
+        'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_BROWSER_KEY,
+    }
+    return render(request, 'core/contact.html', context)
+
+
+def blog_list(request):
+    """Paginated list of blog posts"""
+    category_slug = request.GET.get('category')
+    posts = BlogPost.objects.filter(is_published=True)
+    
+    if category_slug:
+        posts = posts.filter(category__slug=category_slug)
+    
+    paginator = Paginator(posts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    categories = BlogCategory.objects.all()
+    
+    return render(request, 'core/blog_list.html', {
+        'page_obj': page_obj,
+        'categories': categories,
+        'selected_category': category_slug,
+    })
+
+
+def blog_detail(request, slug):
+    """Full article view"""
+    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+    recent_posts = BlogPost.objects.filter(is_published=True).exclude(pk=post.pk)[:3]
+    categories = BlogCategory.objects.all()
+    
+    return render(request, 'core/blog_detail.html', {
+        'post': post,
+        'recent_posts': recent_posts,
+        'categories': categories,
+    })
+
+
+def packages(request):
+    """Sponsorship packages page"""
+    packages = SponsorshipPackage.objects.filter(is_active=True).order_by('order')
+    return render(request, 'core/packages.html', {'packages': packages})
+
+
+def donate(request):
+    """Donation goals and fundraiser page"""
+    goals = DonationGoal.objects.filter(is_active=True)
+    return render(request, 'core/donate.html', {'goals': goals})

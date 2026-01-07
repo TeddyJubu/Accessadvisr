@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.html import format_html
-from .models import Category, Listing, Review, ListingPhoto
+from .models import Category, Listing, Review, ListingPhoto, TeamMember, Partner, ContactMessage, BlogCategory, BlogPost, SponsorshipPackage, DonationGoal
 
 
 @admin.register(Category)
@@ -180,3 +180,79 @@ class ListingPhotoAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="max-height: 200px; max-width: 300px;" />', obj.image.url)
         return 'No image uploaded'
     image_preview_large.short_description = 'Image Preview'
+
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ("name", "role", "order", "is_active")
+    list_editable = ("order", "is_active")
+    search_fields = ("name", "role", "bio")
+
+
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ("name", "type", "order", "is_active", "logo_preview")
+    list_editable = ("type", "order", "is_active")
+    list_filter = ("type", "is_active")
+    search_fields = ("name", "description")
+
+    def logo_preview(self, obj):
+        if obj.logo:
+            return format_html('<img src="{}" style="max-height: 40px; max-width: 60px;" />', obj.logo.url)
+        return '-'
+    logo_preview.short_description = 'Logo'
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "subject", "created_at", "is_read")
+    list_filter = ("is_read", "created_at")
+    search_fields = ("name", "email", "subject", "message")
+    readonly_fields = ("name", "email", "subject", "message", "created_at")
+    ordering = ("-created_at",)
+
+
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
+    search_fields = ("name",)
+
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ("title", "category", "author", "created_at", "is_published", "image_preview")
+    list_filter = ("category", "is_published", "created_at")
+    search_fields = ("title", "content", "excerpt")
+    prepopulated_fields = {"slug": ("title",)}
+    date_hierarchy = "created_at"
+    list_editable = ("is_published",)
+    raw_id_fields = ("author",)
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 40px; max-width: 60px;" />', obj.image.url)
+        return '-'
+    image_preview.short_description = 'Image'
+
+
+@admin.register(SponsorshipPackage)
+class SponsorshipPackageAdmin(admin.ModelAdmin):
+    list_display = ("name", "price", "period", "order", "is_active")
+    list_editable = ("order", "is_active")
+    prepopulated_fields = {"slug": ("name",)}
+    search_fields = ("name", "subheading")
+
+
+@admin.register(DonationGoal)
+class DonationGoalAdmin(admin.ModelAdmin):
+    list_display = ("title", "target_amount", "raised_amount", "is_active", "image_preview")
+    list_editable = ("is_active",)
+    prepopulated_fields = {"slug": ("title",)}
+    search_fields = ("title", "description")
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 40px; max-width: 60px;" />', obj.image.url)
+        return '-'
+    image_preview.short_description = 'Image'

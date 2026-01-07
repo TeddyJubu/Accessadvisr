@@ -29,10 +29,14 @@
             <div>
                 <h3 class="text-white font-bold text-lg mb-6">Quick Links</h3>
                 <ul class="space-y-3">
-                    <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Our Team</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    <li><a href="{% url 'about' %}" class="hover:text-white transition-colors">About Us</a></li>
+                    <li><a href="{% url 'about' %}#leadership" class="hover:text-white transition-colors">Our Team</a>
+                    </li>
+                    <li><a href="{% url 'partners' %}" class="hover:text-white transition-colors">Partners</a></li>
+                    <li><a href="{% url 'packages' %}" class="hover:text-white transition-colors">Packages</a></li>
+                    <li><a href="{% url 'blog_list' %}" class="hover:text-white transition-colors">Blogs</a></li>
+                    <li><a href="{% url 'donate' %}" class="hover:text-white transition-colors">Donate</a></li>
+                    <li><a href="{% url 'contact' %}" class="hover:text-white transition-colors">Contact</a></li>
                 </ul>
             </div>
 
@@ -62,14 +66,14 @@
                     </li>
                     <li class="flex items-center gap-3">
                         <i data-lucide="mail" class="w-5 h-5 text-[#FF431E]"></i>
-                        <span>hello@accessadvisr.com</span>
+                        <span>contactus@accessadvisr.net</span>
                     </li>
                 </ul>
             </div>
         </div>
 
         <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
-            <p>&copy; 2024 AccessAdvisr. All rights reserved.</p>
+            <p>&copy; 2026 AccessAdvisr. All rights reserved.</p>
         </div>
     </div>
 </footer>

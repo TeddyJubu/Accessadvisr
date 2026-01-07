@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'tinymce',
     'core',
 ]
 
@@ -244,3 +245,14 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
 if PRODUCTION:
     SITE_URL = 'https://accessadvisr-932375520212.us-central1.run.app'
+
+# TinyMCE Configuration
+TINYMCE_DEFAULT_CONFIG = {
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+    'plugins': 'link image code lists advlist table charmap emoticons',
+    'toolbar': 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code | emoticons',
+    'menubar': True,
+    'statusbar': True,
+}

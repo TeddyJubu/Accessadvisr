@@ -17,6 +17,13 @@ urlpatterns = [
     path('admin-page/', views.admin_page, name='admin_page'),
     path('admin-page/moderate/', views.admin_moderate, name='admin_moderate'),
     path('api/listings/', views.listings_api, name='listings_api'),
+    path('about/', views.about, name='about'),
+    path('partners/', views.partners, name='partners'),
+    path('contact/', views.contact, name='contact'),
+    path('blog/', views.blog_list, name='blog_list'),
+    path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
+    path('packages/', views.packages, name='packages'),
+    path('donate/', views.donate, name='donate'),
     
     # Authentication
     path('login/', auth_views.LoginView.as_view(), name='login'),

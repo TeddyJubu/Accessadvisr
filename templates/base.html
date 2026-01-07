@@ -25,6 +25,12 @@
       <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold text-slate-600">
         <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Home</a>
         <a href="{% url 'listings_list' %}" class="hover:text-[#FF431E]">Listings</a>
+        <a href="{% url 'about' %}" class="hover:text-[#FF431E]">About</a>
+        <a href="{% url 'partners' %}" class="hover:text-[#FF431E]">Partners</a>
+        <a href="{% url 'packages' %}" class="hover:text-[#FF431E]">Packages</a>
+        <a href="{% url 'blog_list' %}" class="hover:text-[#FF431E]">Blogs</a>
+        <a href="{% url 'donate' %}" class="hover:text-[#FF431E]">Donate</a>
+        <a href="{% url 'contact' %}" class="hover:text-[#FF431E]">Contact</a>
         <a href="{% url 'admin_page' %}" class="hover:text-[#FF431E]">Admin</a>
 
         {% if user.is_authenticated %}
@@ -58,6 +64,12 @@
     <nav class="p-6 space-y-4 text-slate-700">
       <a href="{% url 'home' %}" class="block font-semibold">Home</a>
       <a href="{% url 'listings_list' %}" class="block font-semibold">Listings</a>
+      <a href="{% url 'about' %}" class="block font-semibold">About</a>
+      <a href="{% url 'partners' %}" class="block font-semibold">Partners</a>
+      <a href="{% url 'packages' %}" class="block font-semibold">Packages</a>
+      <a href="{% url 'blog_list' %}" class="block font-semibold">Blogs</a>
+      <a href="{% url 'donate' %}" class="block font-semibold text-[#FF431E]">Donate</a>
+      <a href="{% url 'contact' %}" class="block font-semibold">Contact</a>
       <a href="{% url 'admin_page' %}" class="block font-semibold">Admin</a>
       <a href="{% url 'submit_listing' %}" class="block font-semibold text-[#FF431E]">+ Add Venue</a>
       <hr class="border-slate-200">
@@ -94,6 +106,8 @@
   <main>
     {% block content %}{% endblock %}
   </main>
+
+  {% include 'core/partials/footer.html' %}
 
   <script>
     lucide.createIcons();

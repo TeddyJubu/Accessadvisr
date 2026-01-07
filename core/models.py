@@ -1,5 +1,6 @@
 # core/models.py
 from django.db import models
+from tinymce.models import HTMLField
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Avg
@@ -37,7 +38,7 @@ class Listing(models.Model):
     # Basic info
     name = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, blank=True)
-    description = models.TextField(blank=True)
+    description = HTMLField(blank=True)
     categories = models.JSONField(default=list)  # ["Food & Restaurants", "Sport"]
     
     # Location
@@ -253,3 +254,119 @@ def update_listing_rating_on_delete(sender, instance, **kwargs):
     listing.rating = round(avg_rating, 1)
     listing.reviews_count = approved_reviews.count()
     listing.save(update_fields=["rating", "reviews_count"])
+
+class TeamMember(models.Model):
+    """Team member profile for About Us page"""
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    bio = HTMLField()
+    photo = models.ImageField(upload_to='team/', null=True, blank=True)
+    linkedin_url = models.URLField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return f"{self.name} - {self.role}"
+
+
+class Partner(models.Model):
+    """Partner or Sponsor for AccessAdvisr"""
+    PARTNER_TYPES = [
+        ("sponsor", "Sponsor"),
+        ("partner", "Partner & Friend"),
+    ]
+    name = models.CharField(max_length=200)
+    type = models.CharField(max_length=20, choices=PARTNER_TYPES, default="partner")
+    logo = models.ImageField(upload_to='partners/', null=True, blank=True)
+    description = HTMLField(blank=True)
+    website_url = models.URLField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['type', 'order', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.get_type_display()})"
+
+
+class ContactMessage(models.Model):
+    """Stores inquiries from the Contact Us page"""
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    subject = models.CharField(max_length=255, blank=True, default="Inquiry from Website")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Message from {self.name} ({self.email})"
+
+
+class BlogCategory(models.Model):
+    """Categories for blog posts"""
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        verbose_name_plural = "Blog Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    """Articles, news, and travel guides"""
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, related_name="posts")
+    author = models.ForeignKey("auth.User", on_delete=models.SET_NULL, null=True, blank=True)
+    content = HTMLField()
+    excerpt = models.TextField(blank=True)
+    featured_image = models.ImageField(upload_to='blog/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=True)
+    meta_description = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class SponsorshipPackage(models.Model):
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    period = models.CharField(max_length=50, default="Yearly")
+    subheading = models.CharField(max_length=500, blank=True)
+    features = models.JSONField(help_text="Enter features as a list of strings")
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+
+class DonationGoal(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    description = HTMLField()
+    target_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    raised_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    image = models.ImageField(upload_to='donations/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title

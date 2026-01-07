@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Donate - AccessAdvisr{% endblock %}
+{% block meta_description %}Support the AccessAdvisr mission. Your donations help us maintain and expand our platform
+for the disabled community worldwide.{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50 min-h-screen">
+    <!-- Hero/Introduction -->
+    <div class="relative bg-teal-600 py-24 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                alt="Donate" class="w-full h-full object-cover opacity-10">
+        </div>
+        <div class="relative container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Support Our <span
+                    class="text-teal-200">Mission</span></h1>
+            <p class="text-xl text-teal-50 max-w-2xl mx-auto leading-relaxed">
+                Your contributions help us maintain and Expand our platform, ensuring that accessibility information
+                remains free and accurate for everyone.
+            </p>
+        </div>
+    </div>
+
+    <!-- Why Donate Section -->
+    <div class="container mx-auto px-4 py-20">
+        <div class="max-w-4xl mx-auto bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-8 md:p-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8 border-l-4 border-teal-500 pl-6">Why Your Support Matters
+            </h2>
+            <div class="prose prose-teal max-w-none text-slate-600 leading-relaxed text-lg">
+                <p class="mb-6">
+                    AccessAdvisr is dedicated to making the world more accessible for disabled people everywhere. Our
+                    platform allows users to share honest reviews about the accessibility of places, helping others make
+                    informed decisions before visiting.
+                </p>
+                <p class="mb-6">
+                    Running and improving this website comes with costs. Your donation helps us enhance features,
+                    introduce new tools, and ensure the site meets the latest accessibility standards. It allows us to
+                    expand our reach, improve user experience, and continue offering free, accurate information to those
+                    who need it most.
+                </p>
+                <p>
+                    By donating, you become part of a movement that values inclusion and accessibility. Every
+                    contribution, big or small, helps us grow and make a real difference.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Goals -->
+    <div class="container mx-auto px-4 pb-24">
+        <h2 class="text-3xl font-bold text-slate-800 mb-12 text-center">Current <span class="text-teal-600">Donation
+                Goals</span></h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for goal in goals %}
+            <div
+                class="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group transition-all duration-300 hover:shadow-2xl">
+                <div class="relative h-56 overflow-hidden">
+                    {% if goal.image %}
+                    <img src="{{ goal.image.url }}" alt="{{ goal.title }}"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Support" class="w-full h-full object-cover">
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                    <div class="absolute bottom-4 left-6">
+                        <span
+                            class="bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Active
+                            Project</span>
+                    </div>
+                </div>
+
+                <div class="p-8 flex-grow">
+                    <h3
+                        class="text-xl font-bold text-slate-800 mb-3 h-14 overflow-hidden leading-tight group-hover:text-teal-600 transition-colors">
+                        {{ goal.title }}
+                    </h3>
+                    <div class="text-slate-500 text-sm mb-6 h-20 overflow-hidden">
+                        {{ goal.description|striptags|truncatewords:20 }}
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-slate-400 text-xs font-medium uppercase">Progress</span>
+                            <span class="text-teal-600 font-bold text-lg">£{{ goal.raised_amount }} <span
+                                    class="text-slate-400 font-normal text-sm">/ £{{ goal.target_amount }}</span></span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3">
+                            <div class="bg-teal-500 h-3 rounded-full shadow-sm shadow-teal-200"
+                                style="width: {{ goal.progress_percentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 pt-0 mt-auto">
+                    <a href="{% url 'contact' %}?subject=Donation%20Inquiry:%20{{ goal.title|urlencode }}"
+                        class="flex items-center justify-center w-full bg-slate-800 text-white font-bold py-4 rounded-2xl hover:bg-teal-600 transition-all duration-300 shadow-xl shadow-slate-200 group-hover:shadow-teal-100">
+                        <i data-lucide="heart" class="w-5 h-5 mr-2 fill-current"></i>
+                        Support Goal
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                <i data-lucide="heart-off" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
+                <p class="text-slate-500 font-medium">No active donation goals at the moment. You can still support our
+                    general mission.</p>
+                <a href="{% url 'contact' %}" class="mt-6 inline-block text-teal-600 font-bold hover:underline">Get in
+                    touch →</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="bg-white py-24">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked <span
+                    class="text-teal-600">Questions</span></h2>
+
+            <div class="space-y-6">
+                <div class="faq-item border border-slate-100 rounded-2xl p-6 hover:bg-slate-50 transition-colors">
+                    <button
+                        class="w-full font-bold text-lg text-slate-800 flex justify-between items-center text-left focus:outline-none">
+                        Is my donation tax-deductible?
+                        <i data-lucide="chevron-down"
+                            class="faq-icon w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden">
+                        <p class="text-slate-600 mt-3 text-sm leading-relaxed">Please consult with your local tax
+                            professional for advice on tax-deductible contributions in your region.</p>
+                    </div>
+                </div>
+                <div class="faq-item border border-slate-100 rounded-2xl p-6 hover:bg-slate-50 transition-colors">
+                    <button
+                        class="w-full font-bold text-lg text-slate-800 flex justify-between items-center text-left focus:outline-none">
+                        How is my money being used?
+                        <i data-lucide="chevron-down"
+                            class="faq-icon w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden">
+                        <p class="text-slate-600 mt-3 text-sm leading-relaxed">Donations are allocated to server
+                            maintenance, platform development, accessibility audits, and community outreach programmes.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item border border-slate-100 rounded-2xl p-6 hover:bg-slate-50 transition-colors">
+                    <button
+                        class="w-full font-bold text-lg text-slate-800 flex justify-between items-center text-left focus:outline-none">
+                        Can I donate monthly?
+                        <i data-lucide="chevron-down"
+                            class="faq-icon w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden">
+                        <p class="text-slate-600 mt-3 text-sm leading-relaxed">Yes! Monthly support provides the
+                            predictable funding we need to plan long-term improvements. Contact us for subscription
+                            options.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        lucide.createIcons();
+
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const button = item.querySelector('button');
+            const answer = item.querySelector('.faq-answer');
+            const icon = item.querySelector('.faq-icon');
+
+            button.addEventListener('click', () => {
+                const isOpen = !answer.classList.contains('hidden');
+
+                // Toggle current FAQ
+                if (!isOpen) {
+                    answer.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    answer.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

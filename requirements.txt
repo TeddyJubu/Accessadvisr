@@ -22,3 +22,6 @@ Pillow==11.1.0
 # Cloud storage (optional - for production image hosting)
 cloudinary==1.41.0
 django-cloudinary-storage==0.3.0
+
+# Rich Text Editor
+django-tinymce==5.0.0
