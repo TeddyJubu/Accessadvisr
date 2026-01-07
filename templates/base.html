@@ -22,9 +22,23 @@
         <img src="https://accessadvisr.com/wp-content/uploads/2020/02/accessAdvisr_logo.jpeg" alt="AccessAdvisr"
           class="h-10 w-auto">
       </a>
-      <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
+      <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold text-slate-600">
         <a href="{% url 'home' %}" class="hover:text-[#FF431E]">Home</a>
         <a href="{% url 'listings_list' %}" class="hover:text-[#FF431E]">Listings</a>
+        <a href="{% url 'admin_page' %}" class="hover:text-[#FF431E]">Admin</a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="flex items-center gap-2 hover:text-[#FF431E]">
+          <div
+            class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          {{ user.username }}
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="hover:text-[#FF431E]">Sign In</a>
+        {% endif %}
+
         <a href="{% url 'submit_listing' %}"
           class="flex items-center gap-1 px-4 py-2 bg-[#FF431E] text-white rounded-lg hover:bg-[#e53a19] transition-colors">
           <i data-lucide="plus" class="w-4 h-4"></i>
@@ -44,10 +58,38 @@
     <nav class="p-6 space-y-4 text-slate-700">
       <a href="{% url 'home' %}" class="block font-semibold">Home</a>
       <a href="{% url 'listings_list' %}" class="block font-semibold">Listings</a>
+      <a href="{% url 'admin_page' %}" class="block font-semibold">Admin</a>
       <a href="{% url 'submit_listing' %}" class="block font-semibold text-[#FF431E]">+ Add Venue</a>
+      <hr class="border-slate-200">
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}" class="block font-semibold">My Profile</a>
+      <form method="post" action="{% url 'logout' %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="block font-semibold text-red-600">Sign Out</button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}" class="block font-semibold">Sign In</a>
+      <a href="{% url 'register' %}" class="block font-semibold text-[#FF431E]">Create Account</a>
+      {% endif %}
       <button id="mobile-close" class="mt-6 w-full bg-[#FF431E] text-white py-3 rounded font-bold">Close</button>
     </nav>
   </div>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+  <div class="fixed top-24 right-4 z-50 space-y-2 max-w-sm">
+    {% for message in messages %}
+    <div
+      class="flash-message p-4 rounded-lg shadow-lg border flex items-center gap-3 {% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800{% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-800{% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800{% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %}">
+      {% if message.tags == 'success' %}<i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
+      {% elif message.tags == 'warning' %}<i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
+      {% elif message.tags == 'error' %}<i data-lucide="x-circle" class="w-5 h-5 shrink-0"></i>
+      {% else %}<i data-lucide="info" class="w-5 h-5 shrink-0"></i>{% endif %}
+      <span class="text-sm font-medium">{{ message }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <main>
     {% block content %}{% endblock %}
@@ -63,6 +105,16 @@
     menuBtn?.addEventListener('click', openMenu);
     mobileClose?.addEventListener('click', closeMenu);
     mobileMenu?.addEventListener('click', (e) => { if (e.target === mobileMenu) closeMenu(); });
+
+    // Auto-dismiss flash messages after 5 seconds
+    document.querySelectorAll('.flash-message').forEach((msg, i) => {
+      setTimeout(() => {
+        msg.style.transition = 'opacity 0.3s, transform 0.3s';
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateX(100%)';
+        setTimeout(() => msg.remove(), 300);
+      }, 5000 + (i * 500));
+    });
   </script>
 </body>
 

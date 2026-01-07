@@ -1,13 +1,15 @@
 # core/management/commands/geocode_listings.py
-import requests
+"""
+Management command to geocode listings that are missing coordinates.
+"""
 from django.core.management.base import BaseCommand
 from core.models import Listing
+from core.utils import geocode_listing
 from django.conf import settings
 
-GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
 class Command(BaseCommand):
-    help = "Geocode listings with missing lat/lng"
+    help = "Geocode listings with missing lat/lng coordinates"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -18,48 +20,78 @@ class Command(BaseCommand):
             "--limit", type=int, default=100,
             help="Maximum number of listings to process (default: 100)"
         )
+        parser.add_argument(
+            "--force", action="store_true",
+            help="Re-geocode all listings, even those with existing coordinates"
+        )
 
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
         limit = options["limit"]
+        force = options["force"]
         key = settings.GOOGLE_MAPS_SERVER_KEY
         
+        # Check API key
         if not key and not dry_run:
-            self.stdout.write(self.style.ERROR("GOOGLE_MAPS_SERVER_KEY not set. Use --dry-run to preview."))
+            self.stdout.write(self.style.ERROR(
+                "❌ GOOGLE_MAPS_SERVER_KEY not set.\n"
+                "   Add it to your .env file or use --dry-run to preview."
+            ))
             return
         
-        listings_to_geocode = Listing.objects.filter(lat__isnull=True) | Listing.objects.filter(lng__isnull=True)
-        listings_to_geocode = listings_to_geocode[:limit]
+        # Get listings to geocode
+        if force:
+            listings_to_geocode = Listing.objects.all()[:limit]
+            self.stdout.write(self.style.WARNING("Force mode: re-geocoding all listings"))
+        else:
+            listings_to_geocode = (
+                Listing.objects.filter(lat__isnull=True) | 
+                Listing.objects.filter(lng__isnull=True)
+            )[:limit]
+        
         total = listings_to_geocode.count()
         
         if total == 0:
-            self.stdout.write(self.style.SUCCESS("No listings need geocoding."))
+            self.stdout.write(self.style.SUCCESS("✓ All listings already have coordinates."))
             return
         
+        # Dry run - just show what would be geocoded
         if dry_run:
-            self.stdout.write(self.style.WARNING(f"[DRY RUN] Would geocode {total} listings:"))
-            for l in listings_to_geocode:
-                query = l.address or l.location_text()
-                self.stdout.write(f"  • {l.name}: {query}")
+            self.stdout.write(self.style.WARNING(f"\n[DRY RUN] Would geocode {total} listing(s):\n"))
+            for listing in listings_to_geocode:
+                address = listing.address or listing.location_text()
+                coords = f"({listing.lat}, {listing.lng})" if listing.lat else "No coordinates"
+                self.stdout.write(f"  • {listing.name}")
+                self.stdout.write(f"    Address: {address}")
+                self.stdout.write(f"    Current: {coords}\n")
             return
         
-        self.stdout.write(f"Geocoding {total} listings...")
+        # Actually geocode
+        self.stdout.write(f"\n🌍 Geocoding {total} listing(s)...\n")
         
-        for l in listings_to_geocode:
-            query = l.address or l.location_text()
-            try:
-                resp = requests.get(
-                    GEOCODE_URL, 
-                    params={"address": query, "key": key}, 
-                    timeout=10
-                ).json()
-                
-                if resp.get("status") == "OK":
-                    loc = resp["results"][0]["geometry"]["location"]
-                    l.lat, l.lng = loc["lat"], loc["lng"]
-                    l.save(update_fields=["lat", "lng"])
-                    self.stdout.write(self.style.SUCCESS(f"✓ Geocoded: {l.name} -> {l.lat},{l.lng}"))
-                else:
-                    self.stdout.write(self.style.WARNING(f"✗ Failed: {l.name} ({resp.get('status')})"))
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"✗ Error geocoding {l.name}: {str(e)}"))
+        success_count = 0
+        fail_count = 0
+        
+        for listing in listings_to_geocode:
+            address = listing.address or listing.location_text()
+            self.stdout.write(f"  Processing: {listing.name}")
+            
+            if geocode_listing(listing):
+                success_count += 1
+                self.stdout.write(self.style.SUCCESS(
+                    f"    ✓ Geocoded → ({listing.lat:.6f}, {listing.lng:.6f})"
+                ))
+            else:
+                fail_count += 1
+                self.stdout.write(self.style.WARNING(
+                    f"    ✗ Failed to geocode: {address}"
+                ))
+        
+        # Summary
+        self.stdout.write("")
+        if success_count > 0:
+            self.stdout.write(self.style.SUCCESS(f"✓ Successfully geocoded: {success_count}"))
+        if fail_count > 0:
+            self.stdout.write(self.style.WARNING(f"✗ Failed to geocode: {fail_count}"))
+        
+        self.stdout.write(self.style.SUCCESS("\nDone!"))

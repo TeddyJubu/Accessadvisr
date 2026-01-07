@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}My Profile | AccessAdvisr{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+    <!-- Header -->
+    <section class="bg-[#26354E] text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center gap-6">
+                <div
+                    class="w-20 h-20 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center text-3xl font-bold">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold">{{ user.username }}</h1>
+                    <p class="text-slate-300">Member since {{ user.date_joined|date:"F Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Stats Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 sticky top-28">
+                    <h3 class="font-bold text-[#26354E] mb-4">Your Activity</h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-600">Reviews Written</span>
+                            <span class="font-bold text-[#26354E]">{{ user_reviews.count }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-600">Email</span>
+                            <span class="text-sm text-slate-500">{{ user.email|default:"Not set" }}</span>
+                        </div>
+                    </div>
+
+                    <hr class="my-6 border-slate-100">
+
+                    <div class="space-y-3">
+                        <a href="{% url 'listings_list' %}"
+                            class="flex items-center gap-2 text-[#FF431E] font-semibold hover:underline">
+                            <i data-lucide="map" class="w-4 h-4"></i>
+                            Explore Venues
+                        </a>
+                        <a href="{% url 'submit_listing' %}"
+                            class="flex items-center gap-2 text-[#FF431E] font-semibold hover:underline">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Add a Venue
+                        </a>
+                    </div>
+
+                    <hr class="my-6 border-slate-100">
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full py-2 text-red-600 font-semibold hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h2 class="font-bold text-[#26354E] text-xl">Your Reviews</h2>
+                    </div>
+
+                    {% if user_reviews %}
+                    <div class="divide-y divide-slate-100">
+                        {% for review in user_reviews %}
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <a href="{% url 'listing_detail' pk=review.listing.pk %}"
+                                        class="font-semibold text-[#26354E] hover:text-[#FF431E]">
+                                        {{ review.listing.name }}
+                                    </a>
+                                    <p class="text-sm text-slate-500">{{ review.listing.city }}, {{
+                                        review.listing.country }}</p>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    {% for i in "12345" %}
+                                    <i data-lucide="star"
+                                        class="w-4 h-4 {% if forloop.counter <= review.rating %}fill-amber-400 text-amber-400{% else %}text-slate-200{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {% if review.comment %}
+                            <p class="text-slate-600 mb-3">{{ review.comment }}</p>
+                            {% endif %}
+
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">{{ review.created_at|date:"M d, Y" }}</span>
+                                <span
+                                    class="px-2 py-1 rounded text-xs font-medium {% if review.moderation_status == 'approved' %}bg-green-100 text-green-700{% elif review.moderation_status == 'pending' %}bg-amber-100 text-amber-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                    {{ review.moderation_status|title }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="p-12 text-center text-slate-400">
+                        <i data-lucide="message-circle" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+                        <h3 class="font-semibold text-slate-600 mb-1">No reviews yet</h3>
+                        <p class="text-sm mb-4">Share your accessibility experiences to help others.</p>
+                        <a href="{% url 'listings_list' %}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-[#FF431E] text-white font-semibold rounded-lg hover:bg-[#e53a19] transition-colors">
+                            <i data-lucide="map" class="w-4 h-4"></i>
+                            Find a Venue to Review
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>lucide.createIcons();</script>
+{% endblock %}
