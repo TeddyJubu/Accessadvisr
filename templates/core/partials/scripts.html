@@ -35,6 +35,25 @@
         const apiUrl = "{% url 'listings_api' %}";
         let map, markers = [], markerCluster, infoWindow;
 
+        // Handle Google Maps Authentication Failure
+        window.gm_authFailure = function () {
+            const mapRoot = document.getElementById('map');
+            if (mapRoot) {
+                mapRoot.innerHTML = `
+                    <div class="flex items-center justify-center w-full h-full bg-slate-100 text-slate-500">
+                        <div class="text-center p-6">
+                            <i data-lucide="map-off" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <h3 class="font-bold text-lg mb-1">Map Loading Error</h3>
+                            <p class="text-sm">Please check your API key restrictions in Google Cloud Console.</p>
+                            <p class="text-xs mt-2 opacity-70">Error: Authorized URL mismatch</p>
+                        </div>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+            }
+            console.error('Google Maps Auth Failure: Check API Key referrer restrictions.');
+        };
+
         if (!window.google || !window.google.maps) {
             console.log('Google Maps not loaded - waiting...');
             window.addEventListener('load', initializeMapWhenReady);

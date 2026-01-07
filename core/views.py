@@ -226,7 +226,6 @@ def admin_moderate(request):
     return redirect("admin_page")
 
 
-@cache_page(60)
 def listings_api(request):
     """API endpoint for listings with filtering"""
     q = request.GET.get("q", "").strip()
