@@ -493,8 +493,14 @@ def blog_detail(request, slug):
 
 def packages(request):
     """Sponsorship packages page"""
-    packages = SponsorshipPackage.objects.filter(is_active=True).order_by('order')
-    return render(request, 'core/packages.html', {'packages': packages})
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        packages = SponsorshipPackage.objects.filter(is_active=True).order_by('order')
+        return render(request, 'core/packages.html', {'packages': packages})
+    except Exception as e:
+        logger.error(f"Error in packages view: {e}", exc_info=True)
+        raise
 
 
 def donate(request):
